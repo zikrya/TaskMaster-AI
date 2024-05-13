@@ -3,7 +3,7 @@ import { validateToken } from '@/lib/authUtils';
 
 export async function middleware(request) {
     const { pathname } = request.nextUrl;
-    const protectedRoutes = ['/dashboard', '/profile', '/settings'];
+    const protectedRoutes = ['/test'];
 
     if (protectedRoutes.includes(pathname)) {
         const token = request.cookies.get('sb:token');
