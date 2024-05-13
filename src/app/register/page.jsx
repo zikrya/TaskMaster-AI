@@ -1,8 +1,10 @@
 'use client'
 import React, { useState } from 'react'
 import { signUp } from '@/lib/auth';
+import { useRouter } from 'next/navigation';
 
 const Register = () => {
+  const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -10,7 +12,7 @@ const Register = () => {
       e.preventDefault();
       const { user, session, error } = await signUp(email, password);
       if (error) alert(error.message);
-      else alert('Registration successful!');
+      else router.push('/test');
     };
 
     return (
