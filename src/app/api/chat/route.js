@@ -1,5 +1,4 @@
 
-import { NextResponse } from 'next/server';
 
 export const runtime = "edge";
 
@@ -38,7 +37,7 @@ export async function POST(req) {
                 Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
             },
             body: JSON.stringify({
-                model: "gpt-3.5-turbo",
+                model: "gpt-4-turbo-preview",
                 messages: messages,
                 max_tokens: 150,
                 temperature: 0.5
