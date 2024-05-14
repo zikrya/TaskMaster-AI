@@ -6,7 +6,7 @@ export async function POST(req) {
     let content;
     try {
         const body = await req.json();
-        content = body.content;  // Expecting a single piece of content directly in the body
+        content = body.content;
     } catch (error) {
         console.error("Error parsing JSON from request:", error);
         return new Response(JSON.stringify({ message: "Bad request, JSON parsing failed" }), {
@@ -23,7 +23,7 @@ export async function POST(req) {
         });
     }
 
-    // Prepare the message for the API
+    content = `I'm creating a software development project and I need you to break down the project using scrum and agile methodology to into smaller workable pieces with how the flow should be as in every step of development, and structure in terms of coding it. Tell me the tech stack you recommend using, and how to flow of development should be. The project is ${content}`
     const messages = [{
         role: "user",
         content: content
