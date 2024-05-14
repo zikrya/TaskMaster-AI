@@ -2,23 +2,28 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { createClient } from "../../utils/supabase/server";
 import { redirect } from "next/navigation";
-import { SubmitButton } from "./submit-button";
+import { SubmitButton } from "../login/submit-button";
 
 export default function Login({
   searchParams,
 }: {
   searchParams: { message: string };
 }) {
-  const signIn = async (formData: FormData) => {
+
+  const signUp = async (formData: FormData) => {
     "use server";
 
+    const origin = headers().get("origin");
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const supabase = createClient();
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${origin}/auth/callback`,
+      },
     });
 
     if (error) {
@@ -27,7 +32,6 @@ export default function Login({
 
     return redirect("/protected");
   };
-
 
   return (
     <div>
@@ -50,10 +54,10 @@ export default function Login({
           required
         />
         <SubmitButton
-          formAction={signIn}
-          pendingText="Signing In..."
+          formAction={signUp}
+          pendingText="Signing Up..."
         >
-          Sign In
+          Sign Up
         </SubmitButton>
         {searchParams?.message && (
           <p>
