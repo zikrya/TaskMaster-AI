@@ -1,38 +1,52 @@
-'use client'
-import React, { useState } from 'react'
-import { signUp } from '@/lib/auth';
-import { useRouter } from 'next/navigation';
+import React from 'react'
+import { redirect } from "next/navigation";
+import { createClient } from '@/utils/supabase/server';
+import { headers } from 'next/headers'
 
 const Register = () => {
-  const router = useRouter();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
 
-    const handleSignUp = async (e) => {
-      e.preventDefault();
-      const { user, session, error } = await signUp(email, password);
-      if (error) alert(error.message);
-      else router.push('/test');
-    };
+  const handleRegister = async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const origin = headers().get("origin");
+      const email = formData.get("email");
+      const password = formData.get("password");
+      const supabase = createClient();
 
-    return (
-      <form onSubmit={handleSignUp}>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-        />
-        <button type="submit">Register</button>
+      const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+              emailRedirectTo: `${origin}/auth/callback`,
+          },
+      });
+
+      if (error) {
+          router.redirect("/login?message=Could not authenticate user");
+      } else {
+          router.redirect("/login?message=Check email to continue sign in process");
+      }
+  };
+
+  return (
+      <form onSubmit={handleRegister}>
+          <label htmlFor="email">Email</label>
+          <input
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              required
+          />
+          <label htmlFor="password">Password</label>
+          <input
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              required
+          />
+          <button type="submit">Register</button>
       </form>
-    );
-  }
-export default Register
+  );
+};
+
+export default Register;
