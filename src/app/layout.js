@@ -12,11 +12,16 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
     <html lang="en">
-      <body className={inter.className}>{children}</body>
-      <NavBar />
+      <head>
+        {/* Include meta tags, title, and other head elements here */}
+      </head>
+      <body className={inter.className}>
+        <ClerkProvider>
+          <NavBar /> {/* Add the NavBar component here */}
+          {children}
+        </ClerkProvider>
+      </body>
     </html>
-    </ClerkProvider>
   );
 }
