@@ -1,3 +1,4 @@
+// src/pages/project/[projectId]/page.jsx
 'use client';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -13,6 +14,9 @@ const ProjectPage = ({ params }) => {
 
     useEffect(() => {
       const fetchProjectAndResponses = async () => {
+        setIsLoading(true);
+        setError(null);
+
         try {
           const response = await fetch(`/api/projects/${projectId}`);
           if (!response.ok) throw new Error('Failed to fetch project');
@@ -20,13 +24,23 @@ const ProjectPage = ({ params }) => {
           const data = await response.json();
           setProject(data);
 
-          // Assuming chat responses are included in the project data under 'chatResponses'
-          const chatTasks = data.chatResponses.map(resp => `${resp.request}: ${resp.response}`);
-          setColumns([
-            { name: 'To Do', tasks: chatTasks },
-            { name: 'In Progress', tasks: [] },
-            { name: 'Done', tasks: [] },
-          ]);
+          // Adjust to remove the request prefix and split on newline if the responses are formatted that way
+          if (data.chatResponses && Array.isArray(data.chatResponses)) {
+            const chatTasks = data.chatResponses.flatMap(resp =>
+              resp.response.split('\n').map(task => task.trim().split('. ')[1])  // split and remove the number prefix
+            );
+            setColumns([
+              { name: 'To Do', tasks: chatTasks },
+              { name: 'In Progress', tasks: [] },
+              { name: 'Done', tasks: [] },
+            ]);
+          } else {
+            setColumns([
+              { name: 'To Do', tasks: [] },
+              { name: 'In Progress', tasks: [] },
+              { name: 'Done', tasks: [] },
+            ]);
+          }
         } catch (error) {
           console.error('Error fetching project:', error);
           setError(error.message);

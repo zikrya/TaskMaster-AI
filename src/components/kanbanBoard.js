@@ -1,7 +1,9 @@
+// src/components/KanbanBoard.js
 import React from 'react';
 
-// src/components/KanbanBoard.js
 const KanbanBoard = ({ columns }) => {
+    console.log("Columns in Kanban Board:", columns); // Log to see how columns are structured
+
     return (
       <div className="flex space-x-4 p-4">
         {columns.map((column, index) => (
@@ -18,7 +20,8 @@ const KanbanBoard = ({ columns }) => {
         ))}
       </div>
     );
-  };
+};
 
-  export default KanbanBoard;
+export default KanbanBoard;
+
 
