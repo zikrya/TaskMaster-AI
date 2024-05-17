@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 
 export async function POST(request) {
   try {
-    // Get the authenticated user
     const user = await currentUser();
     if (!user) {
       return NextResponse.json(
