@@ -7,6 +7,8 @@ const Projects = () => {
     const [isModalOpen, setModalOpen] = useState(false);
     const [projectName, setProjectName] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
+    const [input, setInput] = useState('');
+    const [description, setDescription] = useState('');
     const router = useRouter();
 
     const openModal = () => setModalOpen(true);
@@ -14,6 +16,25 @@ const Projects = () => {
 
     const handleProjectNameChange = (e) => setProjectName(e.target.value);
     const handleProjectDescriptionChange = (e) => setProjectDescription(e.target.value);
+
+    async function handleAPI(e) {
+        e.preventDefault();
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content: input }) // Send user input as JSON
+            });
+            const data = await response.json();
+            setDescription(data.message); // Update the description with the API response
+        } catch (error) {
+            console.error('Failed to fetch the description:', error);
+            setDescription('Error fetching description.');
+        }
+    }
+
 
     const handleSubmit = async () => {
         // Ensure both fields are filled
@@ -64,6 +85,18 @@ const Projects = () => {
                     required
                 />
                 <button onClick={handleSubmit}>Submit</button>
+                {/* --------------- */}
+                <br />
+                <form onSubmit={handleAPI}>
+                <input
+                    type="text"
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                    placeholder="Enter a programming language"
+                />
+                <button type="submit">Describe</button>
+                <p><strong>Description:</strong> {description}</p>
+            </form>
             </Modal>
         </div>
     );
