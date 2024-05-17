@@ -7,40 +7,36 @@ const ProjectPage = ({ params }) => {
     const router = useRouter();
     const { projectId } = params;
     const [project, setProject] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [columns, setColumns] = useState([]);
 
-    const fetchProject = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        // Fetch the project details
-        const response = await fetch(`/api/projects/${projectId}`);
-        if (!response.ok) throw new Error('Failed to fetch project');
-
-        const data = await response.json();
-        setProject(data);
-
-        // Simulate fetching frameworks (replace with actual API call)
-        const frameworks = ['React', 'Vue', 'Angular', 'Svelte', 'Ember'];  // Example frameworks
-        setColumns([
-          { name: 'To Do', tasks: frameworks },
-          { name: 'In Progress', tasks: [] },
-          { name: 'Done', tasks: [] },
-        ]);
-      } catch (error) {
-        console.error('Error fetching project:', error);
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     useEffect(() => {
-      fetchProject();
-    }, []);
+      const fetchProjectAndResponses = async () => {
+        try {
+          const response = await fetch(`/api/projects/${projectId}`);
+          if (!response.ok) throw new Error('Failed to fetch project');
+
+          const data = await response.json();
+          setProject(data);
+
+          // Assuming chat responses are included in the project data under 'chatResponses'
+          const chatTasks = data.chatResponses.map(resp => `${resp.request}: ${resp.response}`);
+          setColumns([
+            { name: 'To Do', tasks: chatTasks },
+            { name: 'In Progress', tasks: [] },
+            { name: 'Done', tasks: [] },
+          ]);
+        } catch (error) {
+          console.error('Error fetching project:', error);
+          setError(error.message);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchProjectAndResponses();
+    }, [projectId]);
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
@@ -53,6 +49,6 @@ const ProjectPage = ({ params }) => {
         <KanbanBoard columns={columns} />
       </div>
     );
-  };
+};
 
-  export default ProjectPage;
+export default ProjectPage;
