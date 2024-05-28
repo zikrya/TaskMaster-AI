@@ -1,11 +1,9 @@
-// src/pages/project/[projectId]/page.jsx
 'use client';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import KanbanBoard from '../../../components/KanbanBoard';
 
 const ProjectPage = ({ params }) => {
-    const router = useRouter();
     const { projectId } = params;
     const [project, setProject] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -60,7 +58,7 @@ const ProjectPage = ({ params }) => {
       <div>
         <h1>{project.name}</h1>
         <p>{project.description}</p>
-        <KanbanBoard columns={columns} />
+        <KanbanBoard columns={columns} projectId={projectId} />
       </div>
     );
 };
