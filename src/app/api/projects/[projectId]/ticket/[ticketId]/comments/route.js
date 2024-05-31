@@ -60,6 +60,9 @@ export async function POST(req, { params }) {
                 content,
                 userId: dbUser.id,
                 chatResponseId: parseInt(ticketId, 10)
+            },
+            include: {
+                user: true // Include the user in the response
             }
         });
 
