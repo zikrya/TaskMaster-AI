@@ -2,8 +2,6 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-//export const runtime = "edge";
-
 export async function POST(req) {
     let content, projectId;
     try {
@@ -50,16 +48,25 @@ export async function POST(req) {
             });
         }
 
-        // Save the request, response, and projectId to the database
-        await prisma.chatResponse.create({
-            data: {
+        // Extract and clean the frameworks
+        const frameworks = data.choices[0]?.message?.content?.trim().split('\n').map(f => f.trim()).filter(f => f) || [];
+
+        // Save the responses to the database
+        const chatResponses = await prisma.chatResponse.createMany({
+            data: frameworks.map((framework) => ({
                 request: content,
-                response: data.choices[0]?.message?.content?.trim() || "No response generated.",
+                response: framework,
                 projectId: parseInt(projectId, 10)
-            }
+            })),
+            skipDuplicates: true,
         });
 
-        return new Response(JSON.stringify({ message: data.choices[0]?.message?.content?.trim() }), {
+        // Fetch the IDs of the created responses
+        const createdResponses = await prisma.chatResponse.findMany({
+            where: { projectId: parseInt(projectId, 10), request: content }
+        });
+
+        return new Response(JSON.stringify({ message: "Responses created", responses: createdResponses }), {
             headers: { 'Content-Type': 'application/json' },
             status: 200
         });

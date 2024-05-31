@@ -56,7 +56,6 @@ const Projects = () => {
             }
 
             const chatData = await chatResponse.json();
-            setDescription(chatData.message);  // You might want to use this response or display it
 
             // Navigate to the new project page
             closeModal();
@@ -66,6 +65,7 @@ const Projects = () => {
             alert('An unexpected error occurred. Please try again later.');
         }
     }
+
 
     return (
         <div>

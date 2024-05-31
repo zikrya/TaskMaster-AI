@@ -14,13 +14,13 @@ const KanbanBoard = ({ columns, projectId }) => {
                 <div key={index} className="w-1/3 bg-gray-100 p-4 rounded-md">
                     <h2 className="text-lg font-bold mb-4">{column.name}</h2>
                     <div className="space-y-2">
-                        {column.tasks.map((task, idx) => (
+                        {column.tasks.map((task) => (
                             <div
-                                key={idx}
+                                key={task.id}
                                 className="bg-white p-4 rounded-md shadow-md cursor-pointer"
-                                onClick={() => handleTaskClick(idx + 1)} // Assuming idx+1 as taskId, replace with actual taskId
+                                onClick={() => handleTaskClick(task.id)} // Using the correct task ID
                             >
-                                {task}
+                                {task.title} {/* Displaying the task title */}
                             </div>
                         ))}
                     </div>
