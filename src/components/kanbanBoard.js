@@ -6,6 +6,7 @@ const KanbanBoard = ({ columns, projectId, fetchProjectAndResponses }) => {
 
     console.log('KanbanBoard columns:', columns); // Debugging log
 
+
     const handleTaskClick = (taskId) => {
         router.push({
             pathname: `/project/${projectId}/ticket/${taskId}`,

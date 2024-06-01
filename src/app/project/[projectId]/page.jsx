@@ -75,12 +75,16 @@ const ProjectPage = ({ params }) => {
 
     return (
         <FetchProjectProvider value={fetchProjectAndResponses}>
-            <div>
-                <h1>{project.name}</h1>
-                <p>{project.description}</p>
-                <KanbanBoard columns={columns} projectId={projectId} />
-            </div>
-        </FetchProjectProvider>
+        <div>
+            <h1>{project.name}</h1>
+            <p>{project.description}</p>
+            <KanbanBoard
+                columns={columns}
+                projectId={projectId}
+                fetchProjectAndResponses={fetchProjectAndResponses} // Pass the function as a prop
+            />
+        </div>
+    </FetchProjectProvider>
     );
 };
 

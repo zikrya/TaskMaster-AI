@@ -1,9 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useFetchProject } from '../../../../../components/FetchProjectContext';
 
-const TicketPage = ({ params }) => {
+const TicketPage = ({ params, fetchProjectAndResponses }) => {
     const router = useRouter();
     const { projectId, ticketId } = params;
     const [ticket, setTicket] = useState(null);
@@ -12,8 +11,6 @@ const TicketPage = ({ params }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [status, setStatus] = useState('');
-
-    const fetchProjectAndResponses = useFetchProject();
 
     useEffect(() => {
         const fetchTicket = async () => {
@@ -92,7 +89,11 @@ const TicketPage = ({ params }) => {
             }
 
             setStatus(newStatus);
-            fetchProjectAndResponses(); // Refresh the Kanban board
+            if (fetchProjectAndResponses) {
+                fetchProjectAndResponses(); // Refresh the Kanban board
+            } else {
+                console.error('fetchProjectAndResponses is not a function');
+            }
         } catch (error) {
             console.error('Error updating status:', error);
             alert('An unexpected error occurred. Please try again later.');
