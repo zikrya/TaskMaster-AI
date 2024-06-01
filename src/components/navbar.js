@@ -6,10 +6,9 @@ import Link from 'next/link';
 import { SignOutButton, useUser } from '@clerk/nextjs';
 
 const navigation = [
-  { name: 'Product', href: '#' },
+  { name: 'Projects', href: '/projects' },
+  { name: 'About Us', href: '#' },
   { name: 'Features', href: '#' },
-  { name: 'Marketplace', href: '#' },
-  { name: 'Company', href: '#' },
 ];
 
 const NavBar = () => {
@@ -18,23 +17,23 @@ const NavBar = () => {
 
   return (
     <div className="relative z-40">
-      <nav className="bg-gray-800 p-4">
+      <nav className="bg-gradient-to-r from-purple-500 to-blue-500 p-4 shadow-md">
         <div className="container mx-auto flex justify-between items-center">
-          <div className="text-white font-bold">
+          <div className="text-white font-bold text-xl">
             <Link href="/">TaskMaster-AI</Link>
           </div>
-          <div className="hidden lg:flex space-x-4">
+          <div className="hidden lg:flex space-x-8">
             {navigation.map((item) => (
-              <Link key={item.name} href={item.href} className="text-gray-300 hover:text-white">
+              <Link key={item.name} href={item.href} className="text-white hover:text-yellow-300 transition duration-300 ease-in-out hover:underline">
                 {item.name}
               </Link>
             ))}
           </div>
-          <div className="hidden lg:flex">
+          <div className="hidden lg:flex items-center space-x-4">
             {user ? (
-              <SignOutButton className="text-gray-300 hover:text-white">Sign out</SignOutButton>
+              <SignOutButton className="text-white hover:text-yellow-300 transition duration-300 ease-in-out hover:underline">Sign out</SignOutButton>
             ) : (
-              <Link href="/sign-in" className="text-gray-300 hover:text-white">
+              <Link href="/sign-in" className="text-white hover:text-yellow-300 transition duration-300 ease-in-out hover:underline">
                 Log in
               </Link>
             )}
@@ -42,7 +41,7 @@ const NavBar = () => {
           <div className="lg:hidden">
             <button
               type="button"
-              className="text-gray-300 hover:text-white"
+              className="text-white hover:text-yellow-300"
               onClick={() => setMobileMenuOpen(true)}
             >
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
@@ -58,7 +57,7 @@ const NavBar = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50" />
           <div className="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-white p-6">
             <div className="flex items-center justify-between">
-              <Link href="/" className="font-bold">
+              <Link href="/" className="font-bold text-xl text-gray-800">
                 TaskMaster-AI
               </Link>
               <button
@@ -69,9 +68,9 @@ const NavBar = () => {
                 <XMarkIcon className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>
-            <div className="mt-6">
+            <div className="mt-6 space-y-4">
               {navigation.map((item) => (
-                <Link key={item.name} href={item.href} className="block py-2">
+                <Link key={item.name} href={item.href} className="block py-2 text-gray-800 hover:text-yellow-300 transition duration-300 ease-in-out hover:underline">
                   {item.name}
                 </Link>
               ))}
