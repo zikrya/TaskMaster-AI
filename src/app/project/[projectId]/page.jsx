@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
-import KanbanBoard from '../../../components/KanbanBoard';
+import KanbanBoard from '../../../components/kanbanBoard';
 import { FetchProjectProvider } from '../../../components/FetchProjectContext';
 
 const ProjectPage = ({ params }) => {

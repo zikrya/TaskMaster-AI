@@ -2,8 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-const TicketPage = ({ params, fetchProjectAndResponses }) => {
-    const router = useRouter();
+const TicketPage = ({ params }) => {
     const { projectId, ticketId } = params;
     const [ticket, setTicket] = useState(null);
     const [comments, setComments] = useState([]);
@@ -11,6 +10,7 @@ const TicketPage = ({ params, fetchProjectAndResponses }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [status, setStatus] = useState('');
+    const router = useRouter();
 
     useEffect(() => {
         const fetchTicket = async () => {
@@ -89,11 +89,6 @@ const TicketPage = ({ params, fetchProjectAndResponses }) => {
             }
 
             setStatus(newStatus);
-            if (fetchProjectAndResponses) {
-                fetchProjectAndResponses(); // Refresh the Kanban board
-            } else {
-                console.error('fetchProjectAndResponses is not a function');
-            }
         } catch (error) {
             console.error('Error updating status:', error);
             alert('An unexpected error occurred. Please try again later.');

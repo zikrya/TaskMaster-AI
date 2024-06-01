@@ -6,12 +6,10 @@ const KanbanBoard = ({ columns, projectId, fetchProjectAndResponses }) => {
 
     console.log('KanbanBoard columns:', columns); // Debugging log
 
-
     const handleTaskClick = (taskId) => {
-        router.push({
-            pathname: `/project/${projectId}/ticket/${taskId}`,
-            query: { fetchProjectAndResponses: fetchProjectAndResponses.toString() } // Pass function as string
-        });
+        // Construct the URL as a string
+        const url = `/project/${projectId}/ticket/${taskId}?fetchProjectAndResponses=${fetchProjectAndResponses.toString()}`;
+        router.push(url);
     };
 
     return (
