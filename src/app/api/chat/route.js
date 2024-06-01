@@ -56,7 +56,8 @@ export async function POST(req) {
             data: frameworks.map((framework) => ({
                 request: content,
                 response: framework,
-                projectId: parseInt(projectId, 10)
+                projectId: parseInt(projectId, 10),
+                status: "To Do" // Set the default status to "To Do"
             })),
             skipDuplicates: true,
         });
@@ -78,3 +79,4 @@ export async function POST(req) {
         });
     }
 }
+
