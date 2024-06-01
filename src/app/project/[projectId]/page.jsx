@@ -19,7 +19,6 @@ const ProjectPage = ({ params }) => {
             if (!response.ok) throw new Error('Failed to fetch project');
 
             const data = await response.json();
-            console.log('Fetched project data:', data);
             setProject(data);
 
             if (data.chatResponses && Array.isArray(data.chatResponses)) {
@@ -41,10 +40,6 @@ const ProjectPage = ({ params }) => {
                     status: resp.status,
                 }));
 
-                console.log('To Do tasks:', toDoTasks); // Debugging log
-                console.log('In Progress tasks:', inProgressTasks); // Debugging log
-                console.log('Done tasks:', doneTasks); // Debugging log
-
                 setColumns([
                     { name: 'To Do', tasks: toDoTasks },
                     { name: 'In Progress', tasks: inProgressTasks },
@@ -58,7 +53,6 @@ const ProjectPage = ({ params }) => {
                 ]);
             }
         } catch (error) {
-            console.error('Error fetching project:', error);
             setError(error.message);
         } finally {
             setIsLoading(false);
@@ -75,9 +69,9 @@ const ProjectPage = ({ params }) => {
 
     return (
         <FetchProjectProvider value={fetchProjectAndResponses}>
-        <div>
-            <h1>{project.name}</h1>
-            <p>{project.description}</p>
+        <div className="p-8">
+            <h1 className="text-3xl font-bold mb-4">{project.name}</h1>
+            <p className="text-gray-700 mb-8">{project.description}</p>
             <KanbanBoard
                 columns={columns}
                 projectId={projectId}
@@ -89,5 +83,3 @@ const ProjectPage = ({ params }) => {
 };
 
 export default ProjectPage;
-
-

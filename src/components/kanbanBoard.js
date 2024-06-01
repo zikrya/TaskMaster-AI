@@ -7,26 +7,30 @@ const KanbanBoard = ({ columns, projectId, fetchProjectAndResponses }) => {
     console.log('KanbanBoard columns:', columns); // Debugging log
 
     const handleTaskClick = (taskId) => {
-        // Construct the URL as a string
         const url = `/project/${projectId}/ticket/${taskId}?fetchProjectAndResponses=${fetchProjectAndResponses.toString()}`;
         router.push(url);
     };
 
     return (
-        <div className="flex space-x-4 p-4">
+        <div className="flex space-x-4 p-4 overflow-x-auto h-full">
             {columns.map((column, index) => (
-                <div key={index} className="w-1/3 bg-gray-100 p-4 rounded-md">
-                    <h2 className="text-lg font-bold mb-4">{column.name}</h2>
-                    <div className="space-y-2">
+                <div key={index} className="w-1/3 bg-gray-100 p-4 rounded-md shadow-md flex flex-col min-h-[1000px]">
+                    <h2 className="text-lg font-bold mb-4 text-center">{column.name}</h2>
+                    <div className="flex-1 space-y-4 overflow-y-auto">
                         {column.tasks.map((task) => (
                             <div
                                 key={task.id}
-                                className="bg-white p-4 rounded-md shadow-md cursor-pointer"
+                                className="bg-white p-4 rounded-md shadow hover:shadow-lg transition-shadow duration-200 cursor-pointer"
                                 onClick={() => handleTaskClick(task.id)}
                             >
-                                {task.title}
+                                <p className="text-gray-800">{task.title}</p>
                             </div>
                         ))}
+                        {column.tasks.length === 0 && (
+                            <div className="bg-white p-4 rounded-md shadow">
+                                <p className="text-gray-400 italic">No tasks</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             ))}
