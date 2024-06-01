@@ -100,35 +100,69 @@ const TicketPage = ({ params }) => {
     if (!ticket) return <div>Ticket not found</div>;
 
     return (
-        <div>
-            <h1>Ticket {ticketId}</h1>
-            <p>{ticket.response}</p>
+        <div className="p-8 bg-gray-100 min-h-screen">
+            <div className="max-w-6xl mx-auto bg-white p-10 rounded-md shadow-md flex flex-col lg:flex-row min-h-screen">
+                <div className="flex-1 pr-0 lg:pr-8 mb-8 lg:mb-0">
+                    <div className="mb-8">
+                        <h1 className="text-2xl font-bold">{ticket.response}</h1>
+                        <p className="text-gray-600">Ticket #{ticketId}</p>
+                    </div>
 
-            <h2>Comments</h2>
-            <ul>
-                {comments.map((comment) => (
-                    <li key={comment.id}>
-                        <strong>{comment.user ? comment.user.email : 'Unknown User'}</strong>: {comment.content}
-                    </li>
-                ))}
-            </ul>
+                    <div className="mb-8">
+                        <p className="text-gray-800">{ticket.description}</p>
+                    </div>
 
-            <form onSubmit={handleCommentSubmit}>
-                <textarea
-                    value={newComment}
-                    onChange={handleNewCommentChange}
-                    placeholder="Add a comment"
-                    required
-                />
-                <button type="submit">Submit Comment</button>
-            </form>
+                    <div className="mb-8">
+                        <h2 className="text-xl font-semibold mb-4">Comments</h2>
+                        <ul className="space-y-4">
+                            {comments.map((comment) => (
+                                <li key={comment.id} className="bg-gray-100 p-4 rounded-md">
+                                    <strong>{comment.user ? comment.user.email : 'Unknown User'}</strong>
+                                    <p>{comment.content}</p>
+                                </li>
+                            ))}
+                        </ul>
 
-            <h2>Status</h2>
-            <select value={status} onChange={handleStatusChange}>
-                <option value="To Do">To Do</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Done">Done</option>
-            </select>
+                        <form onSubmit={handleCommentSubmit} className="mt-4">
+                            <textarea
+                                value={newComment}
+                                onChange={handleNewCommentChange}
+                                placeholder="Add a comment"
+                                required
+                                className="w-full p-2 border rounded mb-4"
+                            />
+                            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                                Submit Comment
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div className="w-full lg:w-1/4">
+                    <div className="mb-8">
+                        <h2 className="text-lg font-semibold mb-4">Status</h2>
+                        <select
+                            value={status}
+                            onChange={handleStatusChange}
+                            className="w-full p-2 border rounded"
+                        >
+                            <option value="To Do">To Do</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Done">Done</option>
+                        </select>
+                    </div>
+
+                    <div className="mb-8">
+                        <h2 className="text-lg font-semibold mb-4">Assignees</h2>
+                        <p>No one - <a href="#" className="text-blue-500">Assign yourself</a></p>
+                    </div>
+
+                    <div className="mb-8">
+                        <h2 className="text-lg font-semibold mb-4">Projects</h2>
+                        <p>TaskMaster-AI</p>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
