@@ -1,6 +1,7 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import KanbanBoard from '../../../components/KanbanBoard';
+import { FetchProjectProvider } from '../../../components/FetchProjectContext';
 
 const ProjectPage = ({ params }) => {
     const { projectId } = params;
@@ -9,59 +10,80 @@ const ProjectPage = ({ params }) => {
     const [error, setError] = useState(null);
     const [columns, setColumns] = useState([]);
 
-    useEffect(() => {
-        const fetchProjectAndResponses = async () => {
-            setIsLoading(true);
-            setError(null);
+    const fetchProjectAndResponses = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
 
-            try {
-                const response = await fetch(`/api/projects/${projectId}`);
-                if (!response.ok) throw new Error('Failed to fetch project');
+        try {
+            const response = await fetch(`/api/projects/${projectId}`);
+            if (!response.ok) throw new Error('Failed to fetch project');
 
-                const data = await response.json();
-                console.log('Fetched project data:', data);
-                setProject(data);
+            const data = await response.json();
+            console.log('Fetched project data:', data);
+            setProject(data);
 
-                if (data.chatResponses && Array.isArray(data.chatResponses)) {
-                    const chatTasks = data.chatResponses.map(resp => ({
-                        id: resp.id,
-                        title: resp.response // Assuming the response is the title
-                    }));
-                    console.log('Formatted chat tasks:', chatTasks);
-                    setColumns([
-                        { name: 'To Do', tasks: chatTasks },
-                        { name: 'In Progress', tasks: [] },
-                        { name: 'Done', tasks: [] },
-                    ]);
-                } else {
-                    setColumns([
-                        { name: 'To Do', tasks: [] },
-                        { name: 'In Progress', tasks: [] },
-                        { name: 'Done', tasks: [] },
-                    ]);
-                }
-            } catch (error) {
-                console.error('Error fetching project:', error);
-                setError(error.message);
-            } finally {
-                setIsLoading(false);
+            if (data.chatResponses && Array.isArray(data.chatResponses)) {
+                const toDoTasks = data.chatResponses.filter(resp => resp.status === "To Do").map(resp => ({
+                    id: resp.id,
+                    title: resp.response,
+                    status: resp.status,
+                }));
+
+                const inProgressTasks = data.chatResponses.filter(resp => resp.status === "In Progress").map(resp => ({
+                    id: resp.id,
+                    title: resp.response,
+                    status: resp.status,
+                }));
+
+                const doneTasks = data.chatResponses.filter(resp => resp.status === "Done").map(resp => ({
+                    id: resp.id,
+                    title: resp.response,
+                    status: resp.status,
+                }));
+
+                console.log('To Do tasks:', toDoTasks); // Debugging log
+                console.log('In Progress tasks:', inProgressTasks); // Debugging log
+                console.log('Done tasks:', doneTasks); // Debugging log
+
+                setColumns([
+                    { name: 'To Do', tasks: toDoTasks },
+                    { name: 'In Progress', tasks: inProgressTasks },
+                    { name: 'Done', tasks: doneTasks },
+                ]);
+            } else {
+                setColumns([
+                    { name: 'To Do', tasks: [] },
+                    { name: 'In Progress', tasks: [] },
+                    { name: 'Done', tasks: [] },
+                ]);
             }
-        };
-
-        fetchProjectAndResponses();
+        } catch (error) {
+            console.error('Error fetching project:', error);
+            setError(error.message);
+        } finally {
+            setIsLoading(false);
+        }
     }, [projectId]);
+
+    useEffect(() => {
+        fetchProjectAndResponses();
+    }, [fetchProjectAndResponses]);
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
     if (!project) return <div>Project not found</div>;
 
     return (
-        <div>
-            <h1>{project.name}</h1>
-            <p>{project.description}</p>
-            <KanbanBoard columns={columns} projectId={projectId} />
-        </div>
+        <FetchProjectProvider value={fetchProjectAndResponses}>
+            <div>
+                <h1>{project.name}</h1>
+                <p>{project.description}</p>
+                <KanbanBoard columns={columns} projectId={projectId} />
+            </div>
+        </FetchProjectProvider>
     );
 };
 
 export default ProjectPage;
+
+

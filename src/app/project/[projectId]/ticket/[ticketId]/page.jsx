@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useFetchProject } from '../../../../../components/FetchProjectContext';
 
 const TicketPage = ({ params }) => {
     const router = useRouter();
@@ -10,6 +11,9 @@ const TicketPage = ({ params }) => {
     const [newComment, setNewComment] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [status, setStatus] = useState('');
+
+    const fetchProjectAndResponses = useFetchProject();
 
     useEffect(() => {
         const fetchTicket = async () => {
@@ -22,6 +26,7 @@ const TicketPage = ({ params }) => {
 
                 const data = await response.json();
                 setTicket(data);
+                setStatus(data.status || ''); // Ensure the status is not null or undefined
 
                 // Fetch comments for this ticket
                 const commentsResponse = await fetch(`/api/projects/${projectId}/ticket/${ticketId}/comments`);
@@ -70,6 +75,30 @@ const TicketPage = ({ params }) => {
         }
     };
 
+    const handleStatusChange = async (e) => {
+        const newStatus = e.target.value;
+        try {
+            const response = await fetch(`/api/projects/${projectId}/ticket/${ticketId}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus }),
+            });
+
+            if (!response.ok) {
+                const { message } = await response.json();
+                console.error(`Failed to update status: ${message}`);
+                alert(`Failed to update status: ${message}`);
+                return;
+            }
+
+            setStatus(newStatus);
+            fetchProjectAndResponses(); // Refresh the Kanban board
+        } catch (error) {
+            console.error('Error updating status:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        }
+    };
+
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
     if (!ticket) return <div>Ticket not found</div>;
@@ -97,6 +126,13 @@ const TicketPage = ({ params }) => {
                 />
                 <button type="submit">Submit Comment</button>
             </form>
+
+            <h2>Status</h2>
+            <select value={status} onChange={handleStatusChange}>
+                <option value="To Do">To Do</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Done">Done</option>
+            </select>
         </div>
     );
 };

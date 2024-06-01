@@ -1,11 +1,16 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-const KanbanBoard = ({ columns, projectId }) => {
+const KanbanBoard = ({ columns, projectId, fetchProjectAndResponses }) => {
     const router = useRouter();
 
+    console.log('KanbanBoard columns:', columns); // Debugging log
+
     const handleTaskClick = (taskId) => {
-        router.push(`/project/${projectId}/ticket/${taskId}`);
+        router.push({
+            pathname: `/project/${projectId}/ticket/${taskId}`,
+            query: { fetchProjectAndResponses: fetchProjectAndResponses.toString() } // Pass function as string
+        });
     };
 
     return (
@@ -18,9 +23,9 @@ const KanbanBoard = ({ columns, projectId }) => {
                             <div
                                 key={task.id}
                                 className="bg-white p-4 rounded-md shadow-md cursor-pointer"
-                                onClick={() => handleTaskClick(task.id)} // Using the correct task ID
+                                onClick={() => handleTaskClick(task.id)}
                             >
-                                {task.title} {/* Displaying the task title */}
+                                {task.title}
                             </div>
                         ))}
                     </div>
