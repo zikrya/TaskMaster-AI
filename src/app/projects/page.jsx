@@ -117,7 +117,7 @@ const Projects = () => {
                         type="text"
                         value={prompt}
                         onChange={handlePromptChange}
-                        placeholder="Enter a programming language"
+                        placeholder="Project Idea"
                         required
                         className="w-full p-2 border rounded"
                     />
