@@ -8,7 +8,6 @@ const Projects = () => {
     const [projectName, setProjectName] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
     const [prompt, setPrompt] = useState('');
-    const [description, setDescription] = useState('');
     const [projects, setProjects] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -23,14 +22,12 @@ const Projects = () => {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        // Ensure all fields are filled
         if (!projectName || !projectDescription || !prompt) {
             alert('All fields are required.');
             return;
         }
 
         try {
-            // First create the project
             const projectResponse = await fetch('/api/projects/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -45,7 +42,6 @@ const Projects = () => {
 
             const projectData = await projectResponse.json();
 
-            // Then send the prompt to the chat API with the new project ID
             const chatResponse = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -60,7 +56,6 @@ const Projects = () => {
 
             const chatData = await chatResponse.json();
 
-            // Navigate to the new project page
             closeModal();
             router.push(`/project/${projectData.id}`);
         } catch (error) {
@@ -95,24 +90,28 @@ const Projects = () => {
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div>
-            <h1>Projects</h1>
-            <button onClick={openModal}>Create New Project</button>
+        <div className="p-6">
+            <h1 className="text-2xl font-bold mb-6">Projects</h1>
+            <button onClick={openModal} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                Create New Project
+            </button>
             <Modal isOpen={isModalOpen} onClose={closeModal}>
-                <h2>Create New Project</h2>
-                <form onSubmit={handleSubmit}>
+                <h2 className="text-xl font-semibold mb-4">Create New Project</h2>
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <input
                         type="text"
                         value={projectName}
                         onChange={handleProjectNameChange}
                         placeholder="Project Name"
                         required
+                        className="w-full p-2 border rounded"
                     />
                     <textarea
                         value={projectDescription}
                         onChange={handleProjectDescriptionChange}
                         placeholder="Project Description"
                         required
+                        className="w-full p-2 border rounded"
                     />
                     <input
                         type="text"
@@ -120,16 +119,21 @@ const Projects = () => {
                         onChange={handlePromptChange}
                         placeholder="Enter a programming language"
                         required
+                        className="w-full p-2 border rounded"
                     />
-                    <button type="submit">Create and Describe</button>
+                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                        Create and Describe
+                    </button>
                 </form>
             </Modal>
 
-            <h2>Your Projects</h2>
-            <ul>
+            <h2 className="text-xl font-semibold mt-8 mb-4">Your Projects</h2>
+            <ul className="space-y-2">
                 {projects.map((project) => (
                     <li key={project.id}>
-                        <a href={`/project/${project.id}`}>{project.name}</a>
+                        <a href={`/project/${project.id}`} className="text-blue-500 hover:underline">
+                            {project.name}
+                        </a>
                     </li>
                 ))}
             </ul>
