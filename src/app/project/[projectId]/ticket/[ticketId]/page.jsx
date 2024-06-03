@@ -31,6 +31,24 @@ const TicketPage = ({ params }) => {
 
                 const commentsData = await commentsResponse.json();
                 setComments(commentsData);
+
+                // Generate description if not present
+                if (!data.description) {
+                    const projectResponse = await fetch(`/api/projects/${projectId}`);
+                    if (!projectResponse.ok) throw new Error('Failed to fetch project');
+
+                    const projectData = await projectResponse.json();
+                    const descriptionResponse = await fetch(`/api/projects/${projectId}/ticket/${ticketId}/description`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ projectDescription: projectData.description, ticketResponse: data.response })
+                    });
+
+                    if (!descriptionResponse.ok) throw new Error('Failed to generate description');
+
+                    const descriptionData = await descriptionResponse.json();
+                    setTicket(prev => ({ ...prev, description: descriptionData.description }));
+                }
             } catch (error) {
                 console.error('Error fetching ticket or comments:', error);
                 setError(error.message);
@@ -109,7 +127,7 @@ const TicketPage = ({ params }) => {
                     </div>
 
                     <div className="mb-8">
-                        <p className="text-gray-800">{ticket.description}</p>
+                        <p className="text-gray-800">{ticket.description || 'No description available'}</p>
                     </div>
 
                     <div className="mb-8">

@@ -19,6 +19,7 @@ export async function GET(req, { params }) {
       },
       include: {
         chatResponses: true, // Include the related chatResponses
+        user: true, // Include the user to fetch user-specific details if needed
       },
     });
 
