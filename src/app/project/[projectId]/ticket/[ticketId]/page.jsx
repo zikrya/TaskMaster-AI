@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 
 const TicketPage = ({ params }) => {
     const { projectId, ticketId } = params;
@@ -127,7 +128,7 @@ const TicketPage = ({ params }) => {
                     </div>
 
                     <div className="mb-8">
-                        <p className="text-gray-800">{ticket.description || 'No description available'}</p>
+                        <ReactMarkdown className="text-gray-800">{ticket.description || 'No description available'}</ReactMarkdown>
                     </div>
 
                     <div className="mb-8">
