@@ -32,7 +32,7 @@ export async function POST(req) {
             },
             body: JSON.stringify({
                 model: "gpt-4-turbo-preview",
-                messages: [{ role: "user", content: `You're a Tech Project manager, an expert in scrum and agile. You'll split up this ${content} into jira tickets for the first story. No descriptions just what you would label the tickets. Only the tech, development tasks, nothing about what to do before developing. Also no intro or anything just skip straight into making the tickets.`}],
+                messages: [{ role: "user", content: `You're a Tech Project manager, an expert in scrum and agile. You'll split up this [development task] into jira tickets for the first story. No descriptions just what you would label the tickets. Only the tech, development tasks, nothing about what to do before developing. Also no intro or anything just skip straight into making the tickets. Project: ${content}` }],
                 max_tokens: 150,
                 temperature: 0.5
             })
@@ -48,8 +48,8 @@ export async function POST(req) {
             });
         }
 
-        // Extract and clean the tasks
-        const tasks = data.choices[0]?.message?.content?.trim().split('\n').map(task => task.trim()).filter(task => task) || [];
+        // Extract and clean the tasks to remove numbering
+        const tasks = data.choices[0]?.message?.content?.trim().split('\n').map(task => task.replace(/^\d+\.\s*/, '').trim()).filter(task => task) || [];
 
         // Save the responses to the database
         const chatResponses = await prisma.chatResponse.createMany({
