@@ -11,6 +11,7 @@ const TicketPage = ({ params }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [status, setStatus] = useState('');
+    const [isGeneratingMore, setIsGeneratingMore] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -32,24 +33,6 @@ const TicketPage = ({ params }) => {
 
                 const commentsData = await commentsResponse.json();
                 setComments(commentsData);
-
-                // Generate description if not present
-                if (!data.description) {
-                    const projectResponse = await fetch(`/api/projects/${projectId}`);
-                    if (!projectResponse.ok) throw new Error('Failed to fetch project');
-
-                    const projectData = await projectResponse.json();
-                    const descriptionResponse = await fetch(`/api/projects/${projectId}/ticket/${ticketId}/description`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ projectDescription: projectData.description, ticketResponse: data.response })
-                    });
-
-                    if (!descriptionResponse.ok) throw new Error('Failed to generate description');
-
-                    const descriptionData = await descriptionResponse.json();
-                    setTicket(prev => ({ ...prev, description: descriptionData.description }));
-                }
             } catch (error) {
                 console.error('Error fetching ticket or comments:', error);
                 setError(error.message);
@@ -114,6 +97,27 @@ const TicketPage = ({ params }) => {
         }
     };
 
+    const handleGenerateMore = async () => {
+        setIsGeneratingMore(true);
+        try {
+            const response = await fetch(`/api/projects/${projectId}/ticket/${ticketId}/description/continue`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currentDescription: ticket.description })
+            });
+
+            if (!response.ok) throw new Error('Failed to generate more description');
+
+            const data = await response.json();
+            setTicket(prev => ({ ...prev, description: prev.description + " " + data.description }));
+        } catch (error) {
+            console.error('Error generating more description:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        } finally {
+            setIsGeneratingMore(false);
+        }
+    };
+
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
     if (!ticket) return <div>Ticket not found</div>;
@@ -129,6 +133,13 @@ const TicketPage = ({ params }) => {
 
                     <div className="mb-8">
                         <ReactMarkdown className="text-gray-800">{ticket.description || 'No description available'}</ReactMarkdown>
+                        <button
+                            onClick={handleGenerateMore}
+                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition mt-4"
+                            disabled={isGeneratingMore}
+                        >
+                            {isGeneratingMore ? 'Generating...' : 'Generate More'}
+                        </button>
                     </div>
 
                     <div className="mb-8">
