@@ -33,8 +33,8 @@ export async function POST(req, { params }) {
                 Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
             },
             body: JSON.stringify({
-                model: "gpt-4-turbo-preview",
-                messages: [{ role: "user", content: `You're a project manager who is an expert in scrum and agile practices. For this [${ticketResponse}] you're going to give a description on what the developer needs to do for this project. The basis of this project is [${projectDescription}]. Skip explaining the ticket title, and the object. Make it concise.` }],
+                model: "gpt-4-turbo",
+                messages: [{ role: "user", content: `You're a project manager who is an expert in scrum and agile practices. For this [${ticketResponse}] you're going to give a description on what the developer needs to do for this project. The basis of this project is ${projectDescription}. Skip explaining the ticket title, and the object. Make it concise.` }],
                 max_tokens: 150,
                 temperature: 0.5
             })
@@ -53,7 +53,7 @@ export async function POST(req, { params }) {
         const description = data.choices[0]?.message?.content?.trim() || "No description generated.";
 
         // Update the ticket with the generated description
-        const updatedTicket = await prisma.chatResponse.update({
+        await prisma.chatResponse.update({
             where: { id: parseInt(ticketId, 10) },
             data: { description },
         });

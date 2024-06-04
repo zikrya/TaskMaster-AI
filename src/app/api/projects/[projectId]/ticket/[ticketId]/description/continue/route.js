@@ -32,7 +32,7 @@ export async function POST(req, { params }) {
                 Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
             },
             body: JSON.stringify({
-                model: "gpt-4-turbo-preview",
+                model: "gpt-4-turbo",
                 messages: [{ role: "user", content: `Continue the following description for the development task: ${currentDescription}` }],
                 max_tokens: 150,
                 temperature: 0.5
