@@ -17,7 +17,7 @@ const NavBar = () => {
 
   return (
     <div className="relative z-40">
-      <nav className="bg-gradient-to-r from-purple-500 to-blue-500 p-4 shadow-md">
+      <nav className="p-4 shadow-md bg-gradient-to-r from-purple-500 to-blue-500 bg-opacity-50 backdrop-blur-lg">
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-white font-bold text-xl">
             <Link href="/">TaskMaster-AI</Link>
