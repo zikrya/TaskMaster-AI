@@ -11,6 +11,7 @@ model User {
   id        String   @id @default(cuid())
   clerkId   String?  @unique
   email     String   @unique
+  username  String?  @unique
   name      String?
   lastName  String?
   projects  Project[]
@@ -42,7 +43,6 @@ model ChatResponse {
   priority    String?
   createdAt   DateTime @default(now())
 }
-
 
 model Comment {
   id              Int          @id @default(autoincrement())

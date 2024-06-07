@@ -28,19 +28,20 @@ export async function GET() {
         name: user.firstName ?? '',
         lastName: user.lastName ?? '',
         email: user.emailAddresses[0].emailAddress ?? '',
+        username: user.username ?? '', // Ensure username is added here
+      },
+    });
+  } else {
+    dbUser = await prisma.user.update({
+      where: { clerkId: user.id },
+      data: {
+        name: user.firstName ?? '',
+        lastName: user.lastName ?? '',
+        email: user.emailAddresses[0].emailAddress ?? '',
+        username: user.username ?? '', // Ensure username is updated here
       },
     });
   }
-
-  if (!dbUser) {
-    return new NextResponse(null, {
-      status: 302, // 302 Found - temporary redirect
-      headers: {
-        Location: 'http://localhost:3000/api/auth/new-user',
-      },
-    });
-  }
-  // Perform your Route Handler's logic with the returned user object
 
   return new NextResponse(null, {
     status: 302, // 302 Found - temporary redirect
