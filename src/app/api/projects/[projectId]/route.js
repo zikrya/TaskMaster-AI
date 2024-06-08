@@ -42,3 +42,22 @@ export async function GET(req, { params }) {
     });
   }
 }
+
+export async function getAllProjects(req, res) {
+  try {
+    const projects = await prisma.project.findMany({
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      include: {
+        chatResponses: true,
+        user: true,
+      },
+    });
+
+    res.status(200).json(projects);
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    res.status(500).json({ message: 'Failed to retrieve projects' });
+  }
+}

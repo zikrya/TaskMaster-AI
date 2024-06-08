@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from '../../components/modal';
 import Link from 'next/link';
-import { IconPinnedFilled } from '@tabler/icons-react';
 
 const Projects = () => {
     const [isModalOpen, setModalOpen] = useState(false);
@@ -93,12 +92,15 @@ const Projects = () => {
 
     return (
         <div className="p-6">
-            <h1 className="text-2xl font-bold mb-6">Projects</h1>
-            <button onClick={openModal} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
-                Create New Project
-            </button>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold">Your Work</h1>
+                <button onClick={openModal} className="bg-white text-gray-400 px-4 py-2 rounded hover:bg-gray-100 transition">
+                    New Project
+                </button>
+            </div>
+            <div className="border-t border-gray-300"></div>
             <Modal isOpen={isModalOpen} onClose={closeModal}>
-                <h2 className="text-xl font-semibold mb-4">Create New Project</h2>
+                <h2 className="text-xl font-semibold mb-4">New Project</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
                         type="text"
@@ -134,10 +136,10 @@ const Projects = () => {
                 {projects.map((project) => (
                     <div key={project.id} className="flex-none w-64">
                         <div className="flex items-center box-border h-32 w-full p-4 bg-white shadow-md rounded relative">
-                            <div className="absolute inset-y-0 left-0 w-4 bg-purple-300 rounded-sm"></div>
-                            <img src="./clipboard.png" className="mr-4 mb-8" />
+                            <div className="absolute inset-y-0 left-0 w-4 bg-purple-200 rounded-sm"></div>
+                            <img src="./clipboard.png" className="absolute left-[4px] top-[1px]" />
                             <Link href={`/project/${project.id}`}>
-                                <div>
+                                <div className="ml-8">
                                     <p className="text-base font-semibold text-blue-600">{project.name}</p>
                                     <p className="text-sm font-light text-blue-400">{project.description}</p>
                                 </div>
