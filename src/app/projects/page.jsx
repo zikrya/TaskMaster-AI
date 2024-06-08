@@ -129,11 +129,11 @@ const Projects = () => {
                 </form>
             </Modal>
 
-            <h2 className="text-xl font-semibold mt-8 mb-4">Your Projects</h2>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <h2 className="text-xl font-semibold mt-8 mb-4">My Projects</h2>
+            <div className="flex overflow-x-scroll space-x-4 p-2">
                 {projects.map((project) => (
-                    <li key={project.id} className="flex justify-center">
-                        <div className="flex items-center box-border h-32 w-64 p-4 bg-white shadow-md rounded relative">
+                    <div key={project.id} className="flex-none w-64">
+                        <div className="flex items-center box-border h-32 w-full p-4 bg-white shadow-md rounded relative">
                             <div className="absolute inset-y-0 left-0 w-4 bg-purple-300 rounded-sm"></div>
                             <img src="./clipboard.png" className="mr-4 mb-8" />
                             <Link href={`/project/${project.id}`}>
@@ -143,9 +143,9 @@ const Projects = () => {
                                 </div>
                             </Link>
                         </div>
-                    </li>
+                    </div>
                 ))}
-            </ul>
+            </div>
         </div>
     );
 };
