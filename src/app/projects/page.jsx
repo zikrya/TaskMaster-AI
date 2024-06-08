@@ -148,6 +148,9 @@ const Projects = () => {
                     </div>
                 ))}
             </div>
+            <div>
+                <h1 className='text-xl font-semibold mt-8 mb-4'>Shared Projects</h1>
+            </div>
         </div>
     );
 };
