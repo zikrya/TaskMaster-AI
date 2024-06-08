@@ -71,7 +71,6 @@ const ProjectPage = ({ params }) => {
         <FetchProjectProvider value={fetchProjectAndResponses}>
         <div className="p-8">
             <h1 className="text-3xl font-bold mb-4">{project.name}</h1>
-            <p className="text-gray-700 mb-8">{project.description}</p>
             <KanbanBoard
                 columns={columns}
                 projectId={projectId}
