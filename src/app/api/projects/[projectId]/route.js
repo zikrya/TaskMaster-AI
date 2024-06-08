@@ -29,6 +29,11 @@ export async function GET(req, { params }) {
       include: {
         chatResponses: true,
         user: true,
+        sharedWith: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
 
@@ -39,12 +44,11 @@ export async function GET(req, { params }) {
       });
     }
 
-    // Log the IDs for troubleshooting
-    console.log('Project User Clerk ID:', project.user.clerkId);
-    console.log('Current User Clerk ID:', user.id);
+    // Check if the current user is the owner or a shared user of the project
+    const isOwner = project.user.clerkId === user.id;
+    const isSharedUser = project.sharedWith.some(shared => shared.user.clerkId === user.id);
 
-    // Check if the current user is the owner of the project
-    if (project.user.clerkId !== user.id) {
+    if (!isOwner && !isSharedUser) {
       return new Response(JSON.stringify({ message: 'Forbidden' }), {
         headers: { 'Content-Type': 'application/json' },
         status: 403,

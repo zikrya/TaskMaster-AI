@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import KanbanBoard from '../../../components/kanbanBoard';
 import { FetchProjectProvider } from '../../../components/FetchProjectContext';
+import ShareProject from '../../../components/ShareProject';
 
 const ProjectPage = ({ params }) => {
     const { projectId } = params;
@@ -19,7 +20,7 @@ const ProjectPage = ({ params }) => {
         try {
             const response = await fetch(`/api/projects/${projectId}`);
             if (response.status === 403) {
-                router.push('/no-access');
+                router.push('/no-access'); // Redirect to 'no-access' page if forbidden
                 return;
             }
             if (!response.ok) throw new Error('Failed to fetch project');
@@ -75,15 +76,16 @@ const ProjectPage = ({ params }) => {
 
     return (
         <FetchProjectProvider value={fetchProjectAndResponses}>
-        <div className="p-8">
-            <h1 className="text-3xl font-bold mb-4">{project.name}</h1>
-            <KanbanBoard
-                columns={columns}
-                projectId={projectId}
-                fetchProjectAndResponses={fetchProjectAndResponses} // Pass the function as a prop
-            />
-        </div>
-    </FetchProjectProvider>
+            <div className="p-8">
+                <h1 className="text-3xl font-bold mb-4">{project.name}</h1>
+                <KanbanBoard
+                    columns={columns}
+                    projectId={projectId}
+                    fetchProjectAndResponses={fetchProjectAndResponses} // Pass the function as a prop
+                />
+                <ShareProject projectId={projectId} /> {/* Add this line to include the share functionality */}
+            </div>
+        </FetchProjectProvider>
     );
 };
 
