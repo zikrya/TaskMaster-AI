@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from '../../components/modal';
+import Link from 'next/link';
+import { IconPinnedFilled } from '@tabler/icons-react';
 
 const Projects = () => {
     const [isModalOpen, setModalOpen] = useState(false);
@@ -128,12 +130,19 @@ const Projects = () => {
             </Modal>
 
             <h2 className="text-xl font-semibold mt-8 mb-4">Your Projects</h2>
-            <ul className="space-y-2">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {projects.map((project) => (
-                    <li key={project.id}>
-                        <a href={`/project/${project.id}`} className="text-blue-500 hover:underline">
-                            {project.name}
-                        </a>
+                    <li key={project.id} className="flex justify-center">
+                        <div className="flex items-center box-border h-32 w-64 p-4 bg-white shadow-md rounded relative">
+                            <div className="absolute inset-y-0 left-0 w-4 bg-purple-300 rounded-sm"></div>
+                            <img src="./clipboard.png" className="mr-4 mb-8" />
+                            <Link href={`/project/${project.id}`}>
+                                <div>
+                                    <p className="text-base font-semibold text-blue-600">{project.name}</p>
+                                    <p className="text-sm font-light text-blue-400">{project.description}</p>
+                                </div>
+                            </Link>
+                        </div>
                     </li>
                 ))}
             </ul>
