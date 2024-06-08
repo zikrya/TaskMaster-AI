@@ -14,7 +14,7 @@ const KanbanBoard = ({ columns, projectId, fetchProjectAndResponses }) => {
     return (
         <div className="flex space-x-4 p-4 overflow-x-auto h-full">
             {columns.map((column, index) => (
-                <div key={index} className="w-1/3 bg-gray-100 p-4 rounded-md shadow-md flex flex-col min-h-[1000px]">
+                <div key={index} className="w-1/3 bg-gray-200 p-4 rounded-md shadow-md flex flex-col min-h-[1000px]">
                     <h2 className="text-lg font-bold mb-4 text-center">{column.name}</h2>
                     <div className="flex-1 space-y-4 overflow-y-auto">
                         {column.tasks.map((task) => (
