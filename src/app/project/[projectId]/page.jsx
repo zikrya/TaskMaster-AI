@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import KanbanBoard from '../../../components/kanbanBoard';
 import { FetchProjectProvider } from '../../../components/FetchProjectContext';
 
@@ -9,6 +10,7 @@ const ProjectPage = ({ params }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [columns, setColumns] = useState([]);
+    const router = useRouter();
 
     const fetchProjectAndResponses = useCallback(async () => {
         setIsLoading(true);
@@ -16,6 +18,10 @@ const ProjectPage = ({ params }) => {
 
         try {
             const response = await fetch(`/api/projects/${projectId}`);
+            if (response.status === 403) {
+                router.push('/no-access');
+                return;
+            }
             if (!response.ok) throw new Error('Failed to fetch project');
 
             const data = await response.json();
@@ -57,7 +63,7 @@ const ProjectPage = ({ params }) => {
         } finally {
             setIsLoading(false);
         }
-    }, [projectId]);
+    }, [projectId, router]);
 
     useEffect(() => {
         fetchProjectAndResponses();
