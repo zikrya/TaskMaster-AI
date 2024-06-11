@@ -11,10 +11,7 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
 
     return (
         <div className="p-4">
-            <h2 className="text-xl font-bold mb-4">{project.name} - View Board</h2>
             <div className="bg-gray-100 p-4 rounded-md shadow-md">
-                {/* Display project details here */}
-                <p>{project.description}</p>
                 <ul className="mt-4">
                     {project.chatResponses.map(response => (
                         <li

@@ -12,7 +12,7 @@ const ProjectPage = ({ params }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [columns, setColumns] = useState([]);
-    const [view, setView] = useState('kanban'); // New state for view type
+    const [view, setView] = useState('kanban');
     const router = useRouter();
 
     const fetchProjectAndResponses = useCallback(async () => {
@@ -22,7 +22,7 @@ const ProjectPage = ({ params }) => {
         try {
             const response = await fetch(`/api/projects/${projectId}`);
             if (response.status === 403) {
-                router.push('/no-access'); // Redirect to 'no-access' page if forbidden
+                router.push('/no-access');
                 return;
             }
             if (!response.ok) throw new Error('Failed to fetch project');
@@ -98,12 +98,12 @@ const ProjectPage = ({ params }) => {
                     <KanbanBoard
                         columns={columns}
                         projectId={projectId}
-                        fetchProjectAndResponses={fetchProjectAndResponses} // Pass the function as a prop
+                        fetchProjectAndResponses={fetchProjectAndResponses}
                     />
                 ) : (
                     <ViewBoard project={project} fetchProjectAndResponses={fetchProjectAndResponses} />
                 )}
-                <ShareProject projectId={projectId} /> {/* Add this line to include the share functionality */}
+                <ShareProject projectId={projectId} />
             </div>
         </FetchProjectProvider>
     );
