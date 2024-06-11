@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import KanbanBoard from '../../../components/kanbanBoard';
+import KanbanBoard from '../../../components/KanbanBoard';
+import ViewBoard from '../../../components/ViewBoard';
 import { FetchProjectProvider } from '../../../components/FetchProjectContext';
 import ShareProject from '../../../components/ShareProject';
 
@@ -11,6 +12,7 @@ const ProjectPage = ({ params }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [columns, setColumns] = useState([]);
+    const [view, setView] = useState('kanban'); // New state for view type
     const router = useRouter();
 
     const fetchProjectAndResponses = useCallback(async () => {
@@ -78,11 +80,29 @@ const ProjectPage = ({ params }) => {
         <FetchProjectProvider value={fetchProjectAndResponses}>
             <div className="p-8">
                 <h1 className="text-3xl font-bold mb-4">{project.name}</h1>
-                <KanbanBoard
-                    columns={columns}
-                    projectId={projectId}
-                    fetchProjectAndResponses={fetchProjectAndResponses} // Pass the function as a prop
-                />
+                <div className="mb-4">
+                    <button
+                        onClick={() => setView('kanban')}
+                        className={`mr-2 px-4 py-2 ${view === 'kanban' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} rounded`}
+                    >
+                        Kanban View
+                    </button>
+                    <button
+                        onClick={() => setView('viewBoard')}
+                        className={`px-4 py-2 ${view === 'viewBoard' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} rounded`}
+                    >
+                        View Board
+                    </button>
+                </div>
+                {view === 'kanban' ? (
+                    <KanbanBoard
+                        columns={columns}
+                        projectId={projectId}
+                        fetchProjectAndResponses={fetchProjectAndResponses} // Pass the function as a prop
+                    />
+                ) : (
+                    <ViewBoard project={project} fetchProjectAndResponses={fetchProjectAndResponses} />
+                )}
                 <ShareProject projectId={projectId} /> {/* Add this line to include the share functionality */}
             </div>
         </FetchProjectProvider>
