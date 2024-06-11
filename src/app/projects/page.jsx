@@ -9,7 +9,8 @@ const Projects = () => {
     const [projectName, setProjectName] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
     const [prompt, setPrompt] = useState('');
-    const [projects, setProjects] = useState([]);
+    const [ownedProjects, setOwnedProjects] = useState([]);
+    const [sharedProjects, setSharedProjects] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const router = useRouter();
@@ -75,7 +76,8 @@ const Projects = () => {
                 if (!response.ok) throw new Error('Failed to fetch projects');
 
                 const data = await response.json();
-                setProjects(data);
+                setOwnedProjects(data.ownedProjects);
+                setSharedProjects(data.sharedProjects);
             } catch (error) {
                 console.error('Error fetching projects:', error);
                 setError(error.message);
@@ -133,7 +135,7 @@ const Projects = () => {
 
             <h2 className="text-xl font-semibold mt-8 mb-4">My Projects</h2>
             <div className="flex overflow-x-scroll space-x-4 p-2">
-                {projects.map((project) => (
+                {ownedProjects.map((project) => (
                     <div key={project.id} className="flex-none w-64">
                         <div className="flex items-center box-border h-32 w-full p-4 bg-white shadow-md rounded relative">
                             <div className="absolute inset-y-0 left-0 w-4 bg-purple-200 rounded-sm"></div>
@@ -148,8 +150,22 @@ const Projects = () => {
                     </div>
                 ))}
             </div>
-            <div>
-                <h1 className='text-xl font-semibold mt-8 mb-4'>Shared Projects</h1>
+            <h2 className="text-xl font-semibold mt-8 mb-4">Shared Projects</h2>
+            <div className="flex overflow-x-scroll space-x-4 p-2">
+                {sharedProjects.map((project) => (
+                    <div key={project.id} className="flex-none w-64">
+                        <div className="flex items-center box-border h-32 w-full p-4 bg-white shadow-md rounded relative">
+                            <div className="absolute inset-y-0 left-0 w-4 bg-purple-200 rounded-sm"></div>
+                            <img src="./clipboard.png" className="absolute left-[4px] top-[1px]" />
+                            <Link href={`/project/${project.id}`}>
+                                <div className="ml-8">
+                                    <p className="text-base font-semibold text-blue-600">{project.name}</p>
+                                    <p className="text-sm font-light text-blue-400">{project.description}</p>
+                                </div>
+                            </Link>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );

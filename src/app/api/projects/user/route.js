@@ -17,7 +17,7 @@ export async function GET() {
         // Find the User record in the database using the clerkId
         const dbUser = await prisma.user.findUnique({
             where: { clerkId: user.id },
-            include: { projects: true },
+            include: { projects: true, sharedProjects: { include: { project: true } } },
         });
 
         if (!dbUser) {
@@ -27,7 +27,13 @@ export async function GET() {
             });
         }
 
-        return new Response(JSON.stringify(dbUser.projects), {
+        // Extract the shared projects
+        const sharedProjects = dbUser.sharedProjects.map(sharedProject => sharedProject.project);
+
+        return new Response(JSON.stringify({
+            ownedProjects: dbUser.projects,
+            sharedProjects: sharedProjects,
+        }), {
             headers: { 'Content-Type': 'application/json' },
             status: 200,
         });
