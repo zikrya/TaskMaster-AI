@@ -139,7 +139,7 @@ const Projects = () => {
                     <div key={project.id} className="flex-none w-64">
                         <div className="flex items-center box-border h-32 w-full p-4 bg-white shadow-md rounded relative">
                             <div className="absolute inset-y-0 left-0 w-4 bg-purple-200 rounded-sm"></div>
-                            <Image src="./clipboard.png" lt="Icon" className="absolute left-[4px] top-[1px]" />
+                            <Image src="/clipboard.png" lt="Icon" width={24} height={24} className="absolute left-[4px] top-[1px]" />
                             <Link href={`/project/${project.id}`}>
                                 <div className="ml-8">
                                     <p className="text-base font-semibold text-blue-600">{project.name}</p>
@@ -156,7 +156,7 @@ const Projects = () => {
                     <div key={project.id} className="flex-none w-64">
                         <div className="flex items-center box-border h-32 w-full p-4 bg-white shadow-md rounded relative">
                             <div className="absolute inset-y-0 left-0 w-4 bg-purple-200 rounded-sm"></div>
-                            <Image src="./clipboard.png" lt="Icon" className="absolute left-[4px] top-[1px]" />
+                            <Image src="/clipboard.png" lt="Icon" width={24} height={24} className="absolute left-[4px] top-[1px]" />
                             <Link href={`/project/${project.id}`}>
                                 <div className="ml-8">
                                     <p className="text-base font-semibold text-blue-600">{project.name}</p>
