@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import KanbanBoard from '../../../components/KanbanBoard';
-import ViewBoard from '../../../components/ViewBoard';
+import KanbanBoard from '../../../components/kanbanBoard';
+import ViewBoard from '../../../components/viewBoard'
 import { FetchProjectProvider } from '../../../components/FetchProjectContext';
 import ShareProject from '../../../components/ShareProject';
 
