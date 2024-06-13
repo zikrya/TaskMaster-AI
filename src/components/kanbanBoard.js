@@ -1,10 +1,9 @@
+'use client'
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
 const KanbanBoard = ({ columns, projectId, fetchProjectAndResponses }) => {
     const router = useRouter();
-
-    console.log('KanbanBoard columns:', columns); // Debugging log
 
     const handleTaskClick = (taskId) => {
         const url = `/project/${projectId}/ticket/${taskId}?fetchProjectAndResponses=${fetchProjectAndResponses.toString()}`;

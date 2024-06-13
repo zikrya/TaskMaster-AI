@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -12,21 +13,35 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
     return (
         <div className="p-4">
             <div className="bg-gray-100 p-4 rounded-md shadow-md">
-                <ul className="mt-4">
-                    {project.chatResponses.map(response => (
-                        <li
-                            key={response.id}
-                            className="bg-white p-2 mb-2 rounded-md shadow cursor-pointer hover:shadow-lg transition-shadow duration-200"
-                            onClick={() => handleTaskClick(response.id)}
-                        >
-                            <p><strong>{response.status}:</strong> {response.response}</p>
-                        </li>
-                    ))}
-                </ul>
+                <header className="flex justify-between items-center mb-4">
+                    <h1 className="text-xl font-semibold">Project Board</h1>
+                    {/* Add any header actions or buttons here */}
+                </header>
+                <table className="min-w-full bg-white border border-gray-200">
+                    <thead>
+                        <tr className="border-b border-gray-300">
+                            <th className="py-2 px-4 border-r border-gray-300 text-left">Title</th>
+                            <th className="py-2 px-4 border-r border-gray-300 text-left">Assignees</th>
+                            <th className="py-2 px-4 text-left">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {project.chatResponses.map((response, index) => (
+                            <tr
+                                key={response.id}
+                                className="cursor-pointer hover:bg-gray-100 transition-colors duration-200 border-b border-gray-300"
+                                onClick={() => handleTaskClick(response.id)}
+                            >
+                                <td className="py-2 px-4 border-r border-gray-300">{`${index + 1}. ${response.response}`}</td>
+                                <td className="py-2 px-4 border-r border-gray-300">{response.assignee}</td>
+                                <td className="py-2 px-4">{response.status}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );
 };
 
 export default ViewBoard;
-
