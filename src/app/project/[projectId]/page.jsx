@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import KanbanBoard from '../../../components/kanbanBoard';
-import ViewBoard from '../../../components/viewBoard'
+import ViewBoard from '../../../components/viewBoard';
 import { FetchProjectProvider } from '../../../components/FetchProjectContext';
 import ShareProject from '../../../components/ShareProject';
 
@@ -76,33 +76,43 @@ const ProjectPage = ({ params }) => {
     if (error) return <div>Error: {error}</div>;
     if (!project) return <div>Project not found</div>;
 
+
+
     return (
         <FetchProjectProvider value={fetchProjectAndResponses}>
-            <div className="p-8">
-                <h1 className="text-3xl font-bold mb-4">{project.name}</h1>
-                <div className="mb-4">
-                    <button
-                        onClick={() => setView('kanban')}
-                        className={`mr-2 px-4 py-2 ${view === 'kanban' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} rounded`}
-                    >
-                        Kanban View
-                    </button>
-                    <button
-                        onClick={() => setView('viewBoard')}
-                        className={`px-4 py-2 ${view === 'viewBoard' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} rounded`}
-                    >
-                        View Board
-                    </button>
+            <div className="min-h-screen flex flex-col">
+                <div className="bg-gray-200 w-full">
+                    <div className="pt-4">
+                        <h1 className="text-3xl font-bold mb-3 px-4">{project.name}</h1>
+                        <div className="flex items-end px-4">
+                            <button
+                                onClick={() => setView('kanban')}
+                                className={`mr-2 px-4 py-2 rounded-t-lg ${view === 'kanban' ? 'bg-white border-x border-t border-b-0 border-gray-300 text-black' : ' border-gray-300 text-gray-500'}`}
+                                style={{ borderBottomColor: view === 'kanban' ? 'white' : '' }}
+                            >
+                                View 1
+                            </button>
+                            <button
+                                onClick={() => setView('viewBoard')}
+                                className={`mr-2 px-4 py-2 rounded-t-lg ${view === 'viewBoard' ? 'bg-white border-x border-t border-b-0 border-gray-300 text-black' : ' border-gray-300 text-gray-500'}`}
+                                style={{ borderBottomColor: view === 'viewBoard' ? 'white' : '' }}
+                            >
+                                View 2
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                {view === 'kanban' ? (
-                    <KanbanBoard
-                        columns={columns}
-                        projectId={projectId}
-                        fetchProjectAndResponses={fetchProjectAndResponses}
-                    />
-                ) : (
-                    <ViewBoard project={project} fetchProjectAndResponses={fetchProjectAndResponses} />
-                )}
+                <div className="flex-grow">
+                    {view === 'kanban' ? (
+                        <KanbanBoard
+                            columns={columns}
+                            projectId={projectId}
+                            fetchProjectAndResponses={fetchProjectAndResponses}
+                        />
+                    ) : (
+                        <ViewBoard project={project} fetchProjectAndResponses={fetchProjectAndResponses} />
+                    )}
+                </div>
                 <ShareProject projectId={projectId} />
             </div>
         </FetchProjectProvider>
