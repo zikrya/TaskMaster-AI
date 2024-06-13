@@ -44,7 +44,6 @@ model ChatResponse {
   priority    String?
   createdAt   DateTime @default(now())
 }
-
 model Comment {
   id              Int          @id @default(autoincrement())
   content         String

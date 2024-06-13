@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import KanbanBoard from '../../../components/kanbanBoard';
-import ViewBoard from '../../../components/viewBoard';
+import KanbanBoard from '../../../components/KanbanBoard';
+import ViewBoard from '../../../components/ViewBoard';
 import { FetchProjectProvider } from '../../../components/FetchProjectContext';
 import ShareProject from '../../../components/ShareProject';
 
@@ -13,6 +13,8 @@ const ProjectPage = ({ params }) => {
     const [error, setError] = useState(null);
     const [columns, setColumns] = useState([]);
     const [view, setView] = useState('kanban');
+    const [newTicketTitle, setNewTicketTitle] = useState('');
+    const [newTicketDescription, setNewTicketDescription] = useState('');
     const router = useRouter();
 
     const fetchProjectAndResponses = useCallback(async () => {
@@ -72,11 +74,39 @@ const ProjectPage = ({ params }) => {
         fetchProjectAndResponses();
     }, [fetchProjectAndResponses]);
 
+    const handleCreateTicket = async (e) => {
+        e.preventDefault();
+        if (!newTicketTitle || !newTicketDescription) {
+            alert('Both title and description are required.');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/projects/${projectId}/ticket/create`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: newTicketTitle, description: newTicketDescription }),
+            });
+
+            if (!response.ok) {
+                const { message } = await response.json();
+                alert(`Failed to create ticket: ${message}`);
+                return;
+            }
+
+            const newTicket = await response.json();
+            setNewTicketTitle('');
+            setNewTicketDescription('');
+            fetchProjectAndResponses();
+        } catch (error) {
+            console.error('Error creating ticket:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        }
+    };
+
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
     if (!project) return <div>Project not found</div>;
-
-
 
     return (
         <FetchProjectProvider value={fetchProjectAndResponses}>
@@ -114,6 +144,29 @@ const ProjectPage = ({ params }) => {
                     )}
                 </div>
                 <ShareProject projectId={projectId} />
+                <div className="p-8 bg-white rounded-md shadow-md mt-4">
+                    <h2 className="text-2xl font-semibold mb-4">Create New Ticket</h2>
+                    <form onSubmit={handleCreateTicket} className="space-y-4">
+                        <input
+                            type="text"
+                            value={newTicketTitle}
+                            onChange={(e) => setNewTicketTitle(e.target.value)}
+                            placeholder="Ticket Title"
+                            required
+                            className="w-full p-2 border rounded"
+                        />
+                        <textarea
+                            value={newTicketDescription}
+                            onChange={(e) => setNewTicketDescription(e.target.value)}
+                            placeholder="Ticket Description"
+                            required
+                            className="w-full p-2 border rounded"
+                        />
+                        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                            Create Ticket
+                        </button>
+                    </form>
+                </div>
             </div>
         </FetchProjectProvider>
     );
