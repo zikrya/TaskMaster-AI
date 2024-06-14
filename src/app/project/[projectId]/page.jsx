@@ -35,19 +35,22 @@ const ProjectPage = ({ params }) => {
             if (data.chatResponses && Array.isArray(data.chatResponses)) {
                 const toDoTasks = data.chatResponses.filter(resp => resp.status === "To Do").map(resp => ({
                     id: resp.id,
-                    title: resp.response,
+                    title: resp.request, // Use request as title
+                    description: resp.response, // Use response as description
                     status: resp.status,
                 }));
 
                 const inProgressTasks = data.chatResponses.filter(resp => resp.status === "In Progress").map(resp => ({
                     id: resp.id,
-                    title: resp.response,
+                    title: resp.request, // Use request as title
+                    description: resp.response, // Use response as description
                     status: resp.status,
                 }));
 
                 const doneTasks = data.chatResponses.filter(resp => resp.status === "Done").map(resp => ({
                     id: resp.id,
-                    title: resp.response,
+                    title: resp.request, // Use request as title
+                    description: resp.response, // Use response as description
                     status: resp.status,
                 }));
 
@@ -97,7 +100,7 @@ const ProjectPage = ({ params }) => {
             const newTicket = await response.json();
             setNewTicketTitle('');
             setNewTicketDescription('');
-            fetchProjectAndResponses();
+            fetchProjectAndResponses(); // Refresh the board to include the new ticket
         } catch (error) {
             console.error('Error creating ticket:', error);
             alert('An unexpected error occurred. Please try again later.');

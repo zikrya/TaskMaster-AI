@@ -29,6 +29,7 @@ export async function POST(req, { params }) {
         response: description,
         projectId: parseInt(projectId, 10),
         status: "To Do",
+        isAIGenerated: false, // Ensure this is set correctly
       },
     });
 

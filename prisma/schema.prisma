@@ -42,6 +42,7 @@ model ChatResponse {
   comments    Comment[]
   status      String?
   priority    String?
+  isAIGenerated Boolean @default(false) // Add this line
   createdAt   DateTime @default(now())
 }
 model Comment {
