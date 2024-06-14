@@ -36,21 +36,21 @@ const ProjectPage = ({ params }) => {
                 const toDoTasks = data.chatResponses.filter(resp => resp.status === "To Do").map(resp => ({
                     id: resp.id,
                     title: resp.request, // Use request as title
-                    description: resp.response, // Use response as description
+                    description: resp.description || resp.response, // Use description if available, else use response
                     status: resp.status,
                 }));
 
                 const inProgressTasks = data.chatResponses.filter(resp => resp.status === "In Progress").map(resp => ({
                     id: resp.id,
                     title: resp.request, // Use request as title
-                    description: resp.response, // Use response as description
+                    description: resp.description || resp.response, // Use description if available, else use response
                     status: resp.status,
                 }));
 
                 const doneTasks = data.chatResponses.filter(resp => resp.status === "Done").map(resp => ({
                     id: resp.id,
                     title: resp.request, // Use request as title
-                    description: resp.response, // Use response as description
+                    description: resp.description || resp.response, // Use description if available, else use response
                     status: resp.status,
                 }));
 

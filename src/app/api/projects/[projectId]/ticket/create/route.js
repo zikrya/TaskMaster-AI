@@ -25,11 +25,12 @@ export async function POST(req, { params }) {
   try {
     const newTicket = await prisma.chatResponse.create({
       data: {
-        request: title,
-        response: description,
+        request: title, // Title of the ticket
+        description: description, // User-provided description
+        response: description, // For simplicity, we'll save the same description in response; you can adjust if needed
         projectId: parseInt(projectId, 10),
         status: "To Do",
-        isAIGenerated: false, // Ensure this is set correctly
+        isAIGenerated: false,
       },
     });
 
@@ -45,3 +46,4 @@ export async function POST(req, { params }) {
     });
   }
 }
+
