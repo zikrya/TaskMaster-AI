@@ -1,12 +1,14 @@
-'use client'
+'use client';
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
 const KanbanBoard = ({ columns, projectId, fetchProjectAndResponses }) => {
     const router = useRouter();
 
-    const handleTaskClick = (taskId) => {
-        const url = `/project/${projectId}/ticket/${taskId}?fetchProjectAndResponses=${fetchProjectAndResponses.toString()}`;
+    const handleTaskClick = (task) => {
+        const url = task.type === 'generated'
+            ? `/project/${projectId}/ticket/${task.id}`
+            : `/project/${projectId}/ticket/custom-ticket/${task.id}`;
         router.push(url);
     };
 
@@ -20,7 +22,7 @@ const KanbanBoard = ({ columns, projectId, fetchProjectAndResponses }) => {
                             <div
                                 key={task.id}
                                 className="bg-white p-4 rounded-md shadow hover:shadow-lg transition-shadow duration-200 cursor-pointer"
-                                onClick={() => handleTaskClick(task.id)}
+                                onClick={() => handleTaskClick(task)}
                             >
                                 <p className="text-gray-800">{task.title}</p>
                             </div>

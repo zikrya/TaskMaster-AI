@@ -5,6 +5,7 @@ import KanbanBoard from '../../../components/kanbanBoard';
 import ViewBoard from '../../../components/viewBoard';
 import { FetchProjectProvider } from '../../../components/FetchProjectContext';
 import ShareProject from '../../../components/ShareProject';
+import CreateTicketForm from '../../../components/CreateTicketForm';
 
 const ProjectPage = ({ params }) => {
     const { projectId } = params;
@@ -30,37 +31,56 @@ const ProjectPage = ({ params }) => {
             const data = await response.json();
             setProject(data);
 
-            if (data.chatResponses && Array.isArray(data.chatResponses)) {
-                const toDoTasks = data.chatResponses.filter(resp => resp.status === "To Do").map(resp => ({
+            const toDoTasks = [
+                ...data.chatResponses.filter(resp => resp.status === "To Do").map(resp => ({
                     id: resp.id,
                     title: resp.response,
                     status: resp.status,
-                }));
+                    type: 'generated'
+                })),
+                ...data.customTickets.filter(ticket => ticket.status === "To Do").map(ticket => ({
+                    id: ticket.id,
+                    title: ticket.title,
+                    status: ticket.status,
+                    type: 'custom'
+                })),
+            ];
 
-                const inProgressTasks = data.chatResponses.filter(resp => resp.status === "In Progress").map(resp => ({
+            const inProgressTasks = [
+                ...data.chatResponses.filter(resp => resp.status === "In Progress").map(resp => ({
                     id: resp.id,
                     title: resp.response,
                     status: resp.status,
-                }));
+                    type: 'generated'
+                })),
+                ...data.customTickets.filter(ticket => ticket.status === "In Progress").map(ticket => ({
+                    id: ticket.id,
+                    title: ticket.title,
+                    status: ticket.status,
+                    type: 'custom'
+                })),
+            ];
 
-                const doneTasks = data.chatResponses.filter(resp => resp.status === "Done").map(resp => ({
+            const doneTasks = [
+                ...data.chatResponses.filter(resp => resp.status === "Done").map(resp => ({
                     id: resp.id,
                     title: resp.response,
                     status: resp.status,
-                }));
+                    type: 'generated'
+                })),
+                ...data.customTickets.filter(ticket => ticket.status === "Done").map(ticket => ({
+                    id: ticket.id,
+                    title: ticket.title,
+                    status: ticket.status,
+                    type: 'custom'
+                })),
+            ];
 
-                setColumns([
-                    { name: 'To Do', tasks: toDoTasks },
-                    { name: 'In Progress', tasks: inProgressTasks },
-                    { name: 'Done', tasks: doneTasks },
-                ]);
-            } else {
-                setColumns([
-                    { name: 'To Do', tasks: [] },
-                    { name: 'In Progress', tasks: [] },
-                    { name: 'Done', tasks: [] },
-                ]);
-            }
+            setColumns([
+                { name: 'To Do', tasks: toDoTasks },
+                { name: 'In Progress', tasks: inProgressTasks },
+                { name: 'Done', tasks: doneTasks },
+            ]);
         } catch (error) {
             setError(error.message);
         } finally {
@@ -75,8 +95,6 @@ const ProjectPage = ({ params }) => {
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
     if (!project) return <div>Project not found</div>;
-
-
 
     return (
         <FetchProjectProvider value={fetchProjectAndResponses}>
@@ -112,6 +130,10 @@ const ProjectPage = ({ params }) => {
                     ) : (
                         <ViewBoard project={project} fetchProjectAndResponses={fetchProjectAndResponses} />
                     )}
+                </div>
+                <div className="p-4">
+                    <h2 className="text-2xl font-semibold mb-4">Create a New Ticket</h2>
+                    <CreateTicketForm projectId={projectId} userId={project.userId} fetchProjectAndResponses={fetchProjectAndResponses} />
                 </div>
                 <ShareProject projectId={projectId} />
             </div>

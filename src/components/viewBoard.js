@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 const ViewBoard = ({ project, fetchProjectAndResponses }) => {
     const router = useRouter();
 
-    const handleTaskClick = (taskId) => {
-        const url = `/project/${project.id}/ticket/${taskId}?fetchProjectAndResponses=${fetchProjectAndResponses.toString()}`;
+    const handleTaskClick = (task) => {
+        const url = task.type === 'generated'
+            ? `/project/${project.id}/ticket/${task.id}`
+            : `/project/${project.id}/ticket/custom-ticket/${task.id}`;
         router.push(url);
     };
 
@@ -25,15 +27,21 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {project.chatResponses.map((response, index) => (
+                    {[...project.chatResponses.map((response, index) => ({
+                        ...response,
+                        type: 'generated',
+                    })), ...project.customTickets.map((ticket, index) => ({
+                        ...ticket,
+                        type: 'custom',
+                    }))].map((task, index) => (
                         <tr
-                            key={response.id}
+                            key={task.id}
                             className="cursor-pointer hover:bg-gray-100 transition-colors duration-200 border-b border-gray-300"
-                            onClick={() => handleTaskClick(response.id)}
+                            onClick={() => handleTaskClick(task)}
                         >
-                            <td className="py-2 px-4 border-r border-gray-300">{`${index + 1}. ${response.response}`}</td>
-                            <td className="py-2 px-4 border-r border-gray-300">{response.assignee}</td>
-                            <td className="py-2 px-4">{response.status}</td>
+                            <td className="py-2 px-4 border-r border-gray-300">{`${index + 1}. ${task.response || task.title}`}</td>
+                            <td className="py-2 px-4 border-r border-gray-300">{task.assignee || 'Unassigned'}</td>
+                            <td className="py-2 px-4">{task.status}</td>
                         </tr>
                     ))}
                 </tbody>

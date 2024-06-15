@@ -28,6 +28,7 @@ export async function GET(req, { params }) {
       },
       include: {
         chatResponses: true,
+        customTickets: true, // Include custom tickets
         user: true,
         sharedWith: {
           include: {
