@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { currentUser, auth } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../../../server/db";
 
 export async function GET() {
   const authResult = auth();

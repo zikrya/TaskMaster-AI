@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from "../../../../../../../../server/db";
 import { currentUser } from '@clerk/nextjs/server';
-
-const prisma = new PrismaClient();
 
 export async function GET(req, { params }) {
     const { projectId, ticketId } = params;

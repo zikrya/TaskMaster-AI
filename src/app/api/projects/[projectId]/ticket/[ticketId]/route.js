@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../../../../../server/db";
 
 export async function GET(req, { params }) {
     const { projectId, ticketId } = params;
