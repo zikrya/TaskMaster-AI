@@ -1,19 +1,11 @@
-import { prisma } from "../../../../../../../server/db";
+import { getComments, addComment } from '../../../../../../../lib/ticketUtils'
 import { currentUser } from '@clerk/nextjs/server';
 
 export async function GET(req, { params }) {
     const { projectId, ticketId } = params;
 
     try {
-        const comments = await prisma.comment.findMany({
-            where: {
-                chatResponseId: parseInt(ticketId, 10)
-            },
-            include: {
-                user: true // Ensure user data is included
-            }
-        });
-
+        const comments = await getComments(ticketId, 'generated');
         return new Response(JSON.stringify(comments), {
             headers: { 'Content-Type': 'application/json' },
             status: 200
@@ -41,29 +33,7 @@ export async function POST(req, { params }) {
     const { content } = await req.json();
 
     try {
-        // Find the User record in the database using the clerkId
-        const dbUser = await prisma.user.findUnique({
-            where: { clerkId: user.id },
-        });
-
-        if (!dbUser) {
-            return new Response(JSON.stringify({ message: 'User not found' }), {
-                headers: { 'Content-Type': 'application/json' },
-                status: 404
-            });
-        }
-
-        const comment = await prisma.comment.create({
-            data: {
-                content,
-                userId: dbUser.id,
-                chatResponseId: parseInt(ticketId, 10)
-            },
-            include: {
-                user: true // Include the user in the response
-            }
-        });
-
+        const comment = await addComment(ticketId, content, user, 'generated');
         return new Response(JSON.stringify(comment), {
             headers: { 'Content-Type': 'application/json' },
             status: 201

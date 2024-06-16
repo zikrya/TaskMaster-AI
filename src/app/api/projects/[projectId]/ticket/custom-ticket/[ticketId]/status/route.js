@@ -1,4 +1,4 @@
-import { prisma } from "../../../../../../../../server/db";
+import { updateTicketStatus } from '../../../../../../../../lib/ticketUtils'
 
 export async function PUT(req, { params }) {
     const { projectId, ticketId } = params;
@@ -23,11 +23,7 @@ export async function PUT(req, { params }) {
     }
 
     try {
-        const updatedTicket = await prisma.customTicket.update({
-            where: { id: parseInt(ticketId, 10) },
-            data: { status: newStatus }
-        });
-
+        const updatedTicket = await updateTicketStatus(ticketId, newStatus, 'custom');
         return new Response(JSON.stringify(updatedTicket), {
             headers: { 'Content-Type': 'application/json' },
             status: 200
