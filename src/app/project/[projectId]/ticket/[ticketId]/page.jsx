@@ -25,7 +25,7 @@ const TicketPage = ({ params }) => {
 
                 const data = await response.json();
                 setTicket(data);
-                setStatus(data.status || ''); // Ensure the status is not null or undefined
+                setStatus(data.status || '');
 
                 // Fetch comments for this ticket
                 const commentsResponse = await fetch(`/api/projects/${projectId}/ticket/${ticketId}/comments`);

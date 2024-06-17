@@ -1,9 +1,10 @@
 'use client'
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const ViewBoard = ({ project, fetchProjectAndResponses }) => {
     const router = useRouter();
+    const [statuses, setStatuses] = useState({});
 
     const handleTaskClick = (task) => {
         const url = task.type === 'generated'
@@ -12,12 +13,36 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
         router.push(url);
     };
 
+    const handleStatusChange = async (e, task) => {
+        const newStatus = e.target.value;
+        const url = task.type === 'generated'
+            ? `/api/projects/${project.id}/ticket/${task.id}/status`
+            : `/api/projects/${project.id}/ticket/custom-ticket/${task.id}/status`;
+
+        try {
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus }),
+            });
+
+            if (!response.ok) {
+                const { message } = await response.json();
+                console.error(`Failed to update status: ${message}`);
+                alert(`Failed to update status: ${message}`);
+                return;
+            }
+
+            setStatuses(prevStatuses => ({ ...prevStatuses, [task.id]: newStatus }));
+            fetchProjectAndResponses(); // Refresh the data after status change
+        } catch (error) {
+            console.error('Error updating status:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        }
+    };
+
     return (
         <div className="p-4">
-            <header className="flex justify-between mb-4">
-                <h1 className="text-xl font-semibold">Project Board</h1>
-                {/* Add any header actions or buttons here */}
-            </header>
             <table className="min-w-full bg-white border border-gray-200">
                 <thead>
                     <tr className="border-b border-gray-300">
@@ -37,11 +62,20 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
                         <tr
                             key={task.id}
                             className="cursor-pointer hover:bg-gray-100 transition-colors duration-200 border-b border-gray-300"
-                            onClick={() => handleTaskClick(task)}
                         >
-                            <td className="py-2 px-4 border-r border-gray-300">{`${index + 1}. ${task.response || task.title}`}</td>
+                            <td className="py-2 px-4 border-r border-gray-300" onClick={() => handleTaskClick(task)}>{`${index + 1}. ${task.response || task.title}`}</td>
                             <td className="py-2 px-4 border-r border-gray-300">{task.assignee || 'Unassigned'}</td>
-                            <td className="py-2 px-4">{task.status}</td>
+                            <td className="py-2 px-4">
+                                <select
+                                    value={statuses[task.id] || task.status}
+                                    onChange={(e) => handleStatusChange(e, task)}
+                                    className="w-full p-2 border rounded"
+                                >
+                                    <option value="To Do">To Do</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Done">Done</option>
+                                </select>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
