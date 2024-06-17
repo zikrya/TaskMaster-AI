@@ -60,3 +60,17 @@ export async function addComment(ticketId, content, user, type) {
 
     return comment;
 }
+
+export async function assignTicket(ticketId, assigneeId, type) {
+    const updatedTicket = type === 'generated'
+        ? await prisma.chatResponse.update({
+            where: { id: parseInt(ticketId, 10) },
+            data: { assigneeId }
+        })
+        : await prisma.customTicket.update({
+            where: { id: parseInt(ticketId, 10) },
+            data: { assigneeId }
+        });
+
+    return updatedTicket;
+}

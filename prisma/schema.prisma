@@ -18,6 +18,8 @@ model User {
   sharedProjects SharedProject[]
   comments      Comment[]
   customTickets CustomTicket[]
+  assignedChatResponses ChatResponse[] @relation("ChatResponseAssignee")
+  assignedCustomTickets CustomTicket[] @relation("CustomTicketAssignee")
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -45,6 +47,8 @@ model ChatResponse {
   comments    Comment[]
   status      String?
   priority    String?
+  assignee    User?    @relation("ChatResponseAssignee", fields: [assigneeId], references: [id])
+  assigneeId  String?
   createdAt   DateTime @default(now())
 }
 
@@ -59,6 +63,8 @@ model CustomTicket {
   status      String?
   priority    String?
   comments    Comment[]
+  assignee    User?    @relation("CustomTicketAssignee", fields: [assigneeId], references: [id])
+  assigneeId  String?
   createdAt   DateTime @default(now())
 }
 

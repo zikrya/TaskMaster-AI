@@ -8,7 +8,7 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        // Fetch the users for assignment dropdown (assumes an API endpoint to fetch project users)
+        // Fetch the users for assignment dropdown
         const fetchUsers = async () => {
             try {
                 const response = await fetch(`/api/projects/${project.id}/users`);
@@ -117,7 +117,7 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
                                 >
                                     <option value="">Unassigned</option>
                                     {users.map(user => (
-                                        <option key={user.id} value={user.id}>{user.username}</option>
+                                        <option key={user.id} value={user.id}>{user.username || user.email}</option>
                                     ))}
                                 </select>
                             </td>
