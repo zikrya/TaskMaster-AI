@@ -1,10 +1,26 @@
-'use client'
-import React, { useState } from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 const ViewBoard = ({ project, fetchProjectAndResponses }) => {
     const router = useRouter();
     const [statuses, setStatuses] = useState({});
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        // Fetch the users for assignment dropdown (assumes an API endpoint to fetch project users)
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch(`/api/projects/${project.id}/users`);
+                const data = await response.json();
+                setUsers(data);
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        };
+
+        fetchUsers();
+    }, [project.id]);
 
     const handleTaskClick = (task) => {
         const url = task.type === 'generated'
@@ -17,7 +33,7 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
         const newStatus = e.target.value;
         const url = task.type === 'generated'
             ? `/api/projects/${project.id}/ticket/${task.id}/status`
-            : `/api/projects/${project.id}/ticket/custom-ticket/${task.id}/status`;
+            : `/api/projects/${project.id}/custom-ticket/${task.id}/status`;
 
         try {
             const response = await fetch(url, {
@@ -37,6 +53,33 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
             fetchProjectAndResponses(); // Refresh the data after status change
         } catch (error) {
             console.error('Error updating status:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        }
+    };
+
+    const handleAssigneeChange = async (e, task) => {
+        const assigneeId = e.target.value;
+        const url = task.type === 'generated'
+            ? `/api/projects/${project.id}/ticket/${task.id}/assign`
+            : `/api/projects/${project.id}/custom-ticket/${task.id}/assign`;
+
+        try {
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ assigneeId }),
+            });
+
+            if (!response.ok) {
+                const { message } = await response.json();
+                console.error(`Failed to update assignee: ${message}`);
+                alert(`Failed to update assignee: ${message}`);
+                return;
+            }
+
+            fetchProjectAndResponses(); // Refresh the data after assignee change
+        } catch (error) {
+            console.error('Error updating assignee:', error);
             alert('An unexpected error occurred. Please try again later.');
         }
     };
@@ -63,8 +106,21 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
                             key={task.id}
                             className="cursor-pointer hover:bg-gray-100 transition-colors duration-200 border-b border-gray-300"
                         >
-                            <td className="py-2 px-4 border-r border-gray-300" onClick={() => handleTaskClick(task)}>{`${index + 1}. ${task.response || task.title}`}</td>
-                            <td className="py-2 px-4 border-r border-gray-300">{task.assignee || 'Unassigned'}</td>
+                            <td className="py-2 px-4 border-r border-gray-300" onClick={() => handleTaskClick(task)}>
+                                {`${index + 1}. ${task.response || task.title}`}
+                            </td>
+                            <td className="py-2 px-4 border-r border-gray-300">
+                                <select
+                                    value={task.assigneeId || ''}
+                                    onChange={(e) => handleAssigneeChange(e, task)}
+                                    className="w-full p-2 border rounded"
+                                >
+                                    <option value="">Unassigned</option>
+                                    {users.map(user => (
+                                        <option key={user.id} value={user.id}>{user.username}</option>
+                                    ))}
+                                </select>
+                            </td>
                             <td className="py-2 px-4">
                                 <select
                                     value={statuses[task.id] || task.status}
