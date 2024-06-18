@@ -33,7 +33,7 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
         const newStatus = e.target.value;
         const url = task.type === 'generated'
             ? `/api/projects/${project.id}/ticket/${task.id}/status`
-            : `/api/projects/${project.id}/custom-ticket/${task.id}/status`;
+            : `/api/projects/${project.id}/ticket/custom-ticket/${task.id}/status`;
 
         try {
             const response = await fetch(url, {
@@ -61,7 +61,7 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
         const assigneeId = e.target.value;
         const url = task.type === 'generated'
             ? `/api/projects/${project.id}/ticket/${task.id}/assign`
-            : `/api/projects/${project.id}/custom-ticket/${task.id}/assign`;
+            : `/api/projects/${project.id}/ticket/custom-ticket/${task.id}/assign`;
 
         try {
             const response = await fetch(url, {
