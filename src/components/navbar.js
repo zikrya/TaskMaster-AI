@@ -1,9 +1,10 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
 import { Dialog } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { SignOutButton, useUser } from '@clerk/nextjs';
+import NotificationBell from './NotificationBell'
 
 const navigation = [
   { name: 'Projects', href: '/projects' },
@@ -30,6 +31,7 @@ const NavBar = () => {
             ))}
           </div>
           <div className="hidden lg:flex items-center space-x-4">
+            <NotificationBell />{/* Add the NotificationBell component here */}
             {user ? (
               <SignOutButton className="text-white hover:text-yellow-300 transition duration-300 ease-in-out hover:underline">Sign out</SignOutButton>
             ) : (

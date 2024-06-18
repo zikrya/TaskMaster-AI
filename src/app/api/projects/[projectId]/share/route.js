@@ -1,7 +1,6 @@
 import { prisma } from "../../../../../server/db";
 import { currentUser } from "@clerk/nextjs/server";
 
-
 export async function POST(request, { params }) {
   const { projectId } = params;
   const { emailOrUsername } = await request.json();
@@ -53,6 +52,16 @@ export async function POST(request, { params }) {
         userId: shareWithUser.id,
       },
     });
+
+    // Create notification
+    const notification = await prisma.notification.create({
+      data: {
+        userId: shareWithUser.id,
+        message: `You have been added to the project "${project.name}"`,
+      },
+    });
+
+    console.log('Notification created:', notification);
 
     return new Response(JSON.stringify({ message: "Project shared successfully" }), {
       headers: { "Content-Type": "application/json" },
