@@ -6,6 +6,7 @@ import ViewBoard from '../../../components/viewBoard';
 import { FetchProjectProvider } from '../../../components/FetchProjectContext';
 import ShareProject from '../../../components/ShareProject';
 import CreateTicketForm from '../../../components/CreateTicketForm';
+import SearchBar from '../../../components/SearchBar';
 
 const ProjectPage = ({ params }) => {
     const { projectId } = params;
@@ -14,6 +15,7 @@ const ProjectPage = ({ params }) => {
     const [error, setError] = useState(null);
     const [columns, setColumns] = useState([]);
     const [view, setView] = useState('kanban');
+    const [searchQuery, setSearchQuery] = useState('');
     const router = useRouter();
 
     const fetchProjectAndResponses = useCallback(async () => {
@@ -92,6 +94,15 @@ const ProjectPage = ({ params }) => {
         fetchProjectAndResponses();
     }, [fetchProjectAndResponses]);
 
+    const filterTasks = (tasks) => {
+        return tasks.filter(task => task.title.toLowerCase().includes(searchQuery.toLowerCase()));
+    };
+
+    const filteredColumns = columns.map(column => ({
+        ...column,
+        tasks: filterTasks(column.tasks)
+    }));
+
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
     if (!project) return <div>Project not found</div>;
@@ -118,17 +129,18 @@ const ProjectPage = ({ params }) => {
                                 View 2
                             </button>
                         </div>
+                        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
                     </div>
                 </div>
                 <div className="flex-grow">
                     {view === 'kanban' ? (
                         <KanbanBoard
-                            columns={columns}
+                            columns={filteredColumns}
                             projectId={projectId}
                             fetchProjectAndResponses={fetchProjectAndResponses}
                         />
                     ) : (
-                        <ViewBoard project={project} fetchProjectAndResponses={fetchProjectAndResponses} />
+                        <ViewBoard project={project} columns={filteredColumns} fetchProjectAndResponses={fetchProjectAndResponses} />
                     )}
                 </div>
                 <div className="p-4">
