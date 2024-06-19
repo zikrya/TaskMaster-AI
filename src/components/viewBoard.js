@@ -13,7 +13,10 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
             try {
                 const response = await fetch(`/api/projects/${project.id}/users`);
                 const data = await response.json();
-                setUsers(data);
+                // Remove duplicate users
+                const uniqueUsers = Array.from(new Set(data.map(user => user.id)))
+                                        .map(id => data.find(user => user.id === id));
+                setUsers(uniqueUsers);
             } catch (error) {
                 console.error('Error fetching users:', error);
             }

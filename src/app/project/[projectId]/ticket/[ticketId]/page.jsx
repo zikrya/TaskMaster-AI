@@ -11,6 +11,8 @@ const TicketPage = ({ params }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [status, setStatus] = useState('');
+    const [assigneeId, setAssigneeId] = useState('');
+    const [users, setUsers] = useState([]);
     const [isGeneratingMore, setIsGeneratingMore] = useState(false);
     const router = useRouter();
 
@@ -26,6 +28,7 @@ const TicketPage = ({ params }) => {
                 const data = await response.json();
                 setTicket(data);
                 setStatus(data.status || '');
+                setAssigneeId(data.assigneeId || '');
 
                 // Fetch comments for this ticket
                 const commentsResponse = await fetch(`/api/projects/${projectId}/ticket/${ticketId}/comments`);
@@ -33,6 +36,18 @@ const TicketPage = ({ params }) => {
 
                 const commentsData = await commentsResponse.json();
                 setComments(commentsData);
+
+                // Fetch users for assignment dropdown
+                const usersResponse = await fetch(`/api/projects/${projectId}/users`);
+                if (!usersResponse.ok) throw new Error('Failed to fetch users');
+
+                const usersData = await usersResponse.json();
+
+                // Remove duplicate users
+                const uniqueUsers = Array.from(new Set(usersData.map(user => user.id)))
+                                         .map(id => usersData.find(user => user.id === id));
+
+                setUsers(uniqueUsers);
 
                 // Generate description if not present
                 if (!data.description) {
@@ -111,6 +126,29 @@ const TicketPage = ({ params }) => {
             setStatus(newStatus);
         } catch (error) {
             console.error('Error updating status:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        }
+    };
+
+    const handleAssigneeChange = async (e) => {
+        const newAssigneeId = e.target.value;
+        try {
+            const response = await fetch(`/api/projects/${projectId}/ticket/${ticketId}/assign`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ assigneeId: newAssigneeId }),
+            });
+
+            if (!response.ok) {
+                const { message } = await response.json();
+                console.error(`Failed to update assignee: ${message}`);
+                alert(`Failed to update assignee: ${message}`);
+                return;
+            }
+
+            setAssigneeId(newAssigneeId);
+        } catch (error) {
+            console.error('Error updating assignee:', error);
             alert('An unexpected error occurred. Please try again later.');
         }
     };
@@ -201,8 +239,17 @@ const TicketPage = ({ params }) => {
                     </div>
 
                     <div className="mb-8">
-                        <h2 className="text-lg font-semibold mb-4">Assignees</h2>
-                        <p>No one - <a href="#" className="text-blue-500">Assign yourself</a></p>
+                        <h2 className="text-lg font-semibold mb-4">Assignee</h2>
+                        <select
+                            value={assigneeId}
+                            onChange={handleAssigneeChange}
+                            className="w-full p-2 border rounded"
+                        >
+                            <option value="">Unassigned</option>
+                            {users.map(user => (
+                                <option key={user.id} value={user.id}>{user.username || user.email}</option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="mb-8">
