@@ -11,6 +11,8 @@ const CustomTicketPage = ({ params }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [status, setStatus] = useState('');
+    const [assigneeId, setAssigneeId] = useState('');
+    const [users, setUsers] = useState([]);
     const router = useRouter();
 
     useEffect(() => {
@@ -25,12 +27,26 @@ const CustomTicketPage = ({ params }) => {
                 const data = await response.json();
                 setTicket(data);
                 setStatus(data.status || ''); // Ensure the status is not null or undefined
+                setAssigneeId(data.assigneeId || '');
 
                 const commentsResponse = await fetch(`/api/projects/${projectId}/ticket/custom-ticket/${ticketId}/comments`);
                 if (!commentsResponse.ok) throw new Error('Failed to fetch comments');
 
                 const commentsData = await commentsResponse.json();
                 setComments(commentsData);
+
+                // Fetch users for assignment dropdown
+                const usersResponse = await fetch(`/api/projects/${projectId}/users`);
+                if (!usersResponse.ok) throw new Error('Failed to fetch users');
+
+                const usersData = await usersResponse.json();
+
+                // Remove duplicate users
+                const uniqueUsers = Array.from(new Set(usersData.map(user => user.id)))
+                                         .map(id => usersData.find(user => user.id === id));
+
+                setUsers(uniqueUsers);
+
             } catch (error) {
                 console.error('Error fetching ticket or comments:', error);
                 setError(error.message);
@@ -95,6 +111,29 @@ const CustomTicketPage = ({ params }) => {
         }
     };
 
+    const handleAssigneeChange = async (e) => {
+        const newAssigneeId = e.target.value;
+        try {
+            const response = await fetch(`/api/projects/${projectId}/ticket/custom-ticket/${ticketId}/assign`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ assigneeId: newAssigneeId }),
+            });
+
+            if (!response.ok) {
+                const { message } = await response.json();
+                console.error(`Failed to update assignee: ${message}`);
+                alert(`Failed to update assignee: ${message}`);
+                return;
+            }
+
+            setAssigneeId(newAssigneeId);
+        } catch (error) {
+            console.error('Error updating assignee:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        }
+    };
+
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
     if (!ticket) return <div>Ticket not found</div>;
@@ -153,8 +192,17 @@ const CustomTicketPage = ({ params }) => {
                     </div>
 
                     <div className="mb-8">
-                        <h2 className="text-lg font-semibold mb-4">Assignees</h2>
-                        <p>No one - <a href="#" className="text-blue-500">Assign yourself</a></p>
+                        <h2 className="text-lg font-semibold mb-4">Assignee</h2>
+                        <select
+                            value={assigneeId}
+                            onChange={handleAssigneeChange}
+                            className="w-full p-2 border rounded"
+                        >
+                            <option value="">Unassigned</option>
+                            {users.map(user => (
+                                <option key={user.id} value={user.id}>{user.username || user.email}</option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="mb-8">
@@ -166,6 +214,5 @@ const CustomTicketPage = ({ params }) => {
         </div>
     );
 };
-
 
 export default CustomTicketPage;
