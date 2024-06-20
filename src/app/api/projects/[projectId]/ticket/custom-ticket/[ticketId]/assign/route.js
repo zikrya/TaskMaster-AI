@@ -30,6 +30,7 @@ export async function PUT(req, { params }) {
                 data: {
                     userId: assigneeId,
                     message: `You have been assigned a new custom ticket: "${updatedTicket.title}"`,
+                    url: `/project/${projectId}/ticket/custom-ticket/${ticketId}`
                 },
             });
 

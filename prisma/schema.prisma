@@ -95,6 +95,7 @@ model Notification {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   message   String
+  url       String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 }

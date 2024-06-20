@@ -1,10 +1,12 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { BellIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
 
 const NotificationBell = () => {
     const [notifications, setNotifications] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -20,6 +22,11 @@ const NotificationBell = () => {
 
         fetchNotifications();
     }, []);
+
+    const handleNotificationClick = (url) => {
+        setIsOpen(false);
+        router.push(url);
+    };
 
     return (
         <div className="relative">
@@ -41,7 +48,11 @@ const NotificationBell = () => {
                         ) : (
                             <ul className="space-y-2">
                                 {notifications.map((notification) => (
-                                    <li key={notification.id} className="p-2 bg-gray-100 rounded-md">
+                                    <li
+                                        key={notification.id}
+                                        className="p-2 bg-gray-100 rounded-md cursor-pointer"
+                                        onClick={() => handleNotificationClick(notification.url)}
+                                    >
                                         {notification.message}
                                     </li>
                                 ))}

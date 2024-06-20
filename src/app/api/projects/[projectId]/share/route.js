@@ -58,6 +58,7 @@ export async function POST(request, { params }) {
       data: {
         userId: shareWithUser.id,
         message: `You have been added to the project "${project.name}"`,
+        url: `/project/${project.id}`, // Add the project URL to the notification
       },
     });
 
