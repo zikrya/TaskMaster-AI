@@ -24,9 +24,22 @@ const NotificationBell = () => {
         fetchNotifications();
     }, []);
 
-    const handleNotificationClick = (url) => {
+    const handleNotificationClick = async (notification) => {
         setIsOpen(false);
-        router.push(url);
+        try {
+            await fetch(`/api/notification/${notification.id}/read`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            router.push(notification.url);
+            setNotifications(notifications.map(n =>
+                n.id === notification.id ? { ...n, read: true } : n
+            ));
+        } catch (error) {
+            console.error('Error marking notification as read:', error);
+        }
     };
 
     useEffect(() => {
@@ -64,8 +77,8 @@ const NotificationBell = () => {
                                 {notifications.map((notification) => (
                                     <li
                                         key={notification.id}
-                                        className="p-2 bg-gray-100 rounded-md cursor-pointer"
-                                        onClick={() => handleNotificationClick(notification.url)}
+                                        className={`p-2 rounded-md cursor-pointer ${notification.read ? 'bg-gray-100' : 'bg-yellow-100'}`}
+                                        onClick={() => handleNotificationClick(notification)}
                                     >
                                         {notification.message}
                                     </li>
