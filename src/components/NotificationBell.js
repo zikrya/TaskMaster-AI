@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { BellIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 
@@ -7,6 +7,7 @@ const NotificationBell = () => {
     const [notifications, setNotifications] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
+    const modalRef = useRef(null);
 
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -28,6 +29,19 @@ const NotificationBell = () => {
         router.push(url);
     };
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     return (
         <div className="relative">
             <button
@@ -40,13 +54,13 @@ const NotificationBell = () => {
                 )}
             </button>
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg z-50">
+                <div ref={modalRef} className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg z-50">
                     <div className="p-4">
                         <h2 className="text-lg font-bold">Notifications</h2>
                         {notifications.length === 0 ? (
                             <p className="text-gray-500">No new notifications</p>
                         ) : (
-                            <ul className="space-y-2">
+                            <ul className="space-y-2 max-h-60 overflow-y-auto">
                                 {notifications.map((notification) => (
                                     <li
                                         key={notification.id}
