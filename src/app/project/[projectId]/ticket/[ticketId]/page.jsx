@@ -181,13 +181,19 @@ const TicketPage = ({ params }) => {
         setStatus(updatedTicket.status || '');
     };
 
+    const handleStatusUpdate = (data) => {
+        if (data.ticketId === ticketId) {
+            setStatus(data.status);
+        }
+    };
+
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
     if (!ticket) return <div>Ticket not found</div>;
 
     return (
         <div className="p-8 bg-gray-100 min-h-screen">
-            <PusherSubscriber projectId={projectId} ticketId={ticketId} onTicketUpdate={handleTicketUpdate} />
+            <PusherSubscriber projectId={projectId} ticketId={ticketId} onTicketUpdate={handleTicketUpdate} onStatusUpdate={handleStatusUpdate} />
             <div className="max-w-6xl mx-auto bg-white p-10 rounded-md shadow-md flex flex-col lg:flex-row min-h-screen">
                 <div className="flex-1 pr-0 lg:pr-8 mb-8 lg:mb-0">
                     <div className="mb-8">
