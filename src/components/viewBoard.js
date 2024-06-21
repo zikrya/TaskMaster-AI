@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Pusher from 'pusher-js';
+import PusherSubscriber from './PusherSubscriber'
 
 const ViewBoard = ({ project, fetchProjectAndResponses }) => {
     const router = useRouter();
@@ -29,38 +29,6 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
             ...project.customTickets.map(ticket => ({ ...ticket, type: 'custom' }))
         ];
         setTasks(initialTasks);
-
-        const pusher = new Pusher('1c63295fb2f1cc8e8963', {
-            cluster: 'us2'
-        });
-
-        const channel = pusher.subscribe('project-channel');
-        channel.bind('ticket-assigned', (data) => {
-            if (data.projectId === project.id) {
-                setTasks(prevTasks => {
-                    const updatedTasks = prevTasks.map(task =>
-                        task.id === parseInt(data.ticketId) ? { ...task, assigneeId: data.assigneeId } : task
-                    );
-                    return updatedTasks;
-                });
-            }
-        });
-
-        channel.bind('custom-ticket-assigned', (data) => {
-            if (data.projectId === project.id) {
-                setTasks(prevTasks => {
-                    const updatedTasks = prevTasks.map(task =>
-                        task.id === parseInt(data.ticketId) ? { ...task, assigneeId: data.assigneeId } : task
-                    );
-                    return updatedTasks;
-                });
-            }
-        });
-
-        return () => {
-            channel.unbind_all();
-            channel.unsubscribe();
-        };
     }, [project.id]);
 
     const handleTaskClick = (task) => {
@@ -117,7 +85,6 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
                 return;
             }
 
-            // Update the task directly
             setTasks(prevTasks => {
                 const updatedTasks = prevTasks.map(t =>
                     t.id === task.id ? { ...t, assigneeId } : t
@@ -130,8 +97,18 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
         }
     };
 
+    const handleTicketAssigned = (data) => {
+        setTasks(prevTasks => {
+            const updatedTasks = prevTasks.map(task =>
+                task.id === parseInt(data.ticketId) ? { ...task, assigneeId: data.assigneeId } : task
+            );
+            return updatedTasks;
+        });
+    };
+
     return (
         <div className="p-4">
+            <PusherSubscriber projectId={project.id} onTicketAssigned={handleTicketAssigned} />
             <table className="min-w-full bg-white border border-gray-200">
                 <thead>
                     <tr className="border-b border-gray-300">
@@ -181,4 +158,3 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
 };
 
 export default ViewBoard;
-
