@@ -1,21 +1,21 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Pusher from 'pusher-js';
 
 const ViewBoard = ({ project, fetchProjectAndResponses }) => {
     const router = useRouter();
     const [statuses, setStatuses] = useState({});
     const [users, setUsers] = useState([]);
+    const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
-        // Fetch the users for assignment dropdown
         const fetchUsers = async () => {
             try {
                 const response = await fetch(`/api/projects/${project.id}/users`);
                 const data = await response.json();
-                // Remove duplicate users
                 const uniqueUsers = Array.from(new Set(data.map(user => user.id)))
-                                        .map(id => data.find(user => user.id === id));
+                    .map(id => data.find(user => user.id === id));
                 setUsers(uniqueUsers);
             } catch (error) {
                 console.error('Error fetching users:', error);
@@ -23,6 +23,44 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
         };
 
         fetchUsers();
+
+        const initialTasks = [
+            ...project.chatResponses.map(response => ({ ...response, type: 'generated' })),
+            ...project.customTickets.map(ticket => ({ ...ticket, type: 'custom' }))
+        ];
+        setTasks(initialTasks);
+
+        const pusher = new Pusher('1c63295fb2f1cc8e8963', {
+            cluster: 'us2'
+        });
+
+        const channel = pusher.subscribe('project-channel');
+        channel.bind('ticket-assigned', (data) => {
+            if (data.projectId === project.id) {
+                setTasks(prevTasks => {
+                    const updatedTasks = prevTasks.map(task =>
+                        task.id === parseInt(data.ticketId) ? { ...task, assigneeId: data.assigneeId } : task
+                    );
+                    return updatedTasks;
+                });
+            }
+        });
+
+        channel.bind('custom-ticket-assigned', (data) => {
+            if (data.projectId === project.id) {
+                setTasks(prevTasks => {
+                    const updatedTasks = prevTasks.map(task =>
+                        task.id === parseInt(data.ticketId) ? { ...task, assigneeId: data.assigneeId } : task
+                    );
+                    return updatedTasks;
+                });
+            }
+        });
+
+        return () => {
+            channel.unbind_all();
+            channel.unsubscribe();
+        };
     }, [project.id]);
 
     const handleTaskClick = (task) => {
@@ -53,7 +91,6 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
             }
 
             setStatuses(prevStatuses => ({ ...prevStatuses, [task.id]: newStatus }));
-            fetchProjectAndResponses(); // Refresh the data after status change
         } catch (error) {
             console.error('Error updating status:', error);
             alert('An unexpected error occurred. Please try again later.');
@@ -80,7 +117,13 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
                 return;
             }
 
-            fetchProjectAndResponses(); // Refresh the data after assignee change
+            // Update the task directly
+            setTasks(prevTasks => {
+                const updatedTasks = prevTasks.map(t =>
+                    t.id === task.id ? { ...t, assigneeId } : t
+                );
+                return updatedTasks;
+            });
         } catch (error) {
             console.error('Error updating assignee:', error);
             alert('An unexpected error occurred. Please try again later.');
@@ -98,13 +141,7 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {[...project.chatResponses.map((response, index) => ({
-                        ...response,
-                        type: 'generated',
-                    })), ...project.customTickets.map((ticket, index) => ({
-                        ...ticket,
-                        type: 'custom',
-                    }))].map((task, index) => (
+                    {[...tasks].map((task, index) => (
                         <tr
                             key={task.id}
                             className="cursor-pointer hover:bg-gray-100 transition-colors duration-200 border-b border-gray-300"
@@ -144,3 +181,4 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
 };
 
 export default ViewBoard;
+
