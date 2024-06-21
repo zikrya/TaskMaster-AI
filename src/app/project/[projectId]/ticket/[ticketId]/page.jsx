@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
+import PusherSubscriber from '../../../../../components/TicketPusherSubscriber';
 
 const TicketPage = ({ params }) => {
     const { projectId, ticketId } = params;
@@ -174,12 +175,19 @@ const TicketPage = ({ params }) => {
         }
     };
 
+    const handleTicketUpdate = (updatedTicket) => {
+        setTicket(updatedTicket);
+        setAssigneeId(updatedTicket.assigneeId || '');
+        setStatus(updatedTicket.status || '');
+    };
+
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
     if (!ticket) return <div>Ticket not found</div>;
 
     return (
         <div className="p-8 bg-gray-100 min-h-screen">
+            <PusherSubscriber projectId={projectId} ticketId={ticketId} onTicketUpdate={handleTicketUpdate} />
             <div className="max-w-6xl mx-auto bg-white p-10 rounded-md shadow-md flex flex-col lg:flex-row min-h-screen">
                 <div className="flex-1 pr-0 lg:pr-8 mb-8 lg:mb-0">
                     <div className="mb-8">
