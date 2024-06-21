@@ -1,4 +1,6 @@
-import { updateTicketStatus } from '../../../../../../../../lib/ticketUtils'
+import { updateTicketStatus } from '../../../../../../../../lib/ticketUtils';
+import { prisma } from '../../../../../../../../server/db';
+import pusher from '../../../../../../../../server/pusher';
 
 export async function PUT(req, { params }) {
     const { projectId, ticketId } = params;
@@ -24,6 +26,15 @@ export async function PUT(req, { params }) {
 
     try {
         const updatedTicket = await updateTicketStatus(ticketId, newStatus, 'custom');
+
+        // Trigger Pusher event
+        pusher.trigger('project-channel', 'custom-ticket-status-updated', {
+            projectId,
+            ticketId,
+            status: newStatus,
+            ticket: updatedTicket
+        });
+
         return new Response(JSON.stringify(updatedTicket), {
             headers: { 'Content-Type': 'application/json' },
             status: 200

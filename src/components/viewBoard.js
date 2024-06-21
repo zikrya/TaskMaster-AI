@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import PusherSubscriber from './PusherSubscriber'
+import PusherSubscriber from './PusherSubscriber';
 
 const ViewBoard = ({ project, fetchProjectAndResponses }) => {
     const router = useRouter();
@@ -106,9 +106,22 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
         });
     };
 
+    const handleStatusUpdated = (data) => {
+        setTasks(prevTasks => {
+            const updatedTasks = prevTasks.map(task =>
+                task.id === parseInt(data.ticketId) ? { ...task, status: data.status } : task
+            );
+            return updatedTasks;
+        });
+    };
+
     return (
         <div className="p-4">
-            <PusherSubscriber projectId={project.id} onTicketAssigned={handleTicketAssigned} />
+            <PusherSubscriber
+                projectId={project.id}
+                onTicketAssigned={handleTicketAssigned}
+                onStatusUpdate={handleStatusUpdated}
+            />
             <table className="min-w-full bg-white border border-gray-200">
                 <thead>
                     <tr className="border-b border-gray-300">
