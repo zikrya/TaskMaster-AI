@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
-import PusherSubscriber from '../../../../../../components/TicketPusherSubscriber';
+import PusherSubscriber from '../../../../../../components/PusherSubscriber';
 
 const CustomTicketPage = ({ params }) => {
     const { projectId, ticketId } = params;
