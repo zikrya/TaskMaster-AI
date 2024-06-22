@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import Modal from '../../components/modal';
 import Link from 'next/link';
 import Image from 'next/image';
+import Pusher from 'pusher-js';
+
 const Projects = () => {
     const [isModalOpen, setModalOpen] = useState(false);
     const [projectName, setProjectName] = useState('');
@@ -87,6 +89,21 @@ const Projects = () => {
         };
 
         fetchProjects();
+
+        const pusher = new Pusher('1c63295fb2f1cc8e8963', {
+            cluster: 'us2'
+        });
+
+        const channel = pusher.subscribe('notifications');
+        channel.bind('new-notification', (data) => {
+            // Logic to add the project from notification to sharedProjects
+            fetchProjects(); // Re-fetch projects to update the list
+        });
+
+        return () => {
+            channel.unbind_all();
+            channel.unsubscribe();
+        };
     }, []);
 
     if (isLoading) return <div>Loading...</div>;

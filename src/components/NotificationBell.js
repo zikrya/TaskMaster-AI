@@ -30,7 +30,12 @@ const NotificationBell = () => {
 
         const channel = pusher.subscribe('notifications');
         channel.bind('new-notification', (data) => {
-            setNotifications(prevNotifications => Array.isArray(prevNotifications) ? [data, ...prevNotifications] : [data]);
+            setNotifications(prevNotifications => {
+                if (Array.isArray(prevNotifications)) {
+                    return [data, ...prevNotifications];
+                }
+                return [data];
+            });
         });
 
         return () => {
@@ -38,6 +43,7 @@ const NotificationBell = () => {
             channel.unsubscribe();
         };
     }, []);
+
     const handleNotificationClick = async (notification) => {
         setIsOpen(false);
         try {

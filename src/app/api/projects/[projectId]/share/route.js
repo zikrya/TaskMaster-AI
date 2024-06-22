@@ -43,25 +43,35 @@ export async function POST(request, { params }) {
             });
         }
 
-        await prisma.sharedProject.create({
-            data: {
+        // Check if the project is already shared with the user
+        const existingSharedProject = await prisma.sharedProject.findFirst({
+            where: {
                 projectId: project.id,
                 userId: shareWithUser.id,
-            },
+            }
         });
 
-        const notification = await prisma.notification.create({
-            data: {
-                userId: shareWithUser.id,
-                message: `You have been added to the project "${project.name}"`,
-                url: `/project/${project.id}`,
-            },
-        });
+        if (!existingSharedProject) {
+            await prisma.sharedProject.create({
+                data: {
+                    projectId: project.id,
+                    userId: shareWithUser.id,
+                },
+            });
 
-        // Trigger Pusher event
-        pusher.trigger('notifications', 'new-notification', notification);
+            const notification = await prisma.notification.create({
+                data: {
+                    userId: shareWithUser.id,
+                    message: `You have been added to the project "${project.name}"`,
+                    url: `/project/${project.id}`,
+                },
+            });
 
-        console.log('Notification created:', notification);
+            // Trigger Pusher event
+            pusher.trigger('notifications', 'new-notification', notification);
+
+            console.log('Notification created:', notification);
+        }
 
         return new Response(JSON.stringify({ message: "Project shared successfully" }), {
             headers: { "Content-Type": "application/json" },
