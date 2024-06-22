@@ -132,9 +132,11 @@ const ProjectPage = ({ params }) => {
                                 View 2
                             </button>
                         </div>
-                        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
                     </div>
                 </div>
+                <div className='content-center'>
+                    <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                    </div>
                 <div className="flex-grow">
                     {view === 'kanban' ? (
                         <KanbanBoard

@@ -3,13 +3,15 @@ import React from 'react';
 
 const SearchBar = ({ searchQuery, setSearchQuery }) => {
     return (
-        <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search tickets..."
-            className="mt-4 p-2 border rounded w-full"
-        />
+        <div className="flex justify-center mt-4">
+            <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search tickets..."
+                className="p-1 border rounded-md w-full"
+            />
+        </div>
     );
 };
 
