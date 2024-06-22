@@ -2,7 +2,6 @@ import { assignTicket } from '../../../../../../../../lib/ticketUtils';
 import { prisma } from '../../../../../../../../server/db';
 import pusher from '../../../../../../../../server/pusher';
 
-
 export async function PUT(req, { params }) {
     const { projectId, ticketId } = params;
     let assigneeId;
@@ -26,7 +25,7 @@ export async function PUT(req, { params }) {
         const updatedTicket = await assignTicket(ticketId, assigneeId, 'custom');
 
         if (assigneeId) {
-            await prisma.notification.create({
+            const notification = await prisma.notification.create({
                 data: {
                     userId: assigneeId,
                     message: `You have been assigned a new custom ticket: "${updatedTicket.title}"`,
@@ -35,6 +34,9 @@ export async function PUT(req, { params }) {
             });
 
             // Trigger Pusher event
+            pusher.trigger('notifications', 'new-notification', notification);
+
+            // Trigger Pusher event for custom ticket assignment
             pusher.trigger('project-channel', 'custom-ticket-assigned', {
                 projectId,
                 ticketId,

@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { BellIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
+import Pusher from 'pusher-js';
 
 const NotificationBell = () => {
     const [notifications, setNotifications] = useState([]);
@@ -15,13 +16,27 @@ const NotificationBell = () => {
                 const response = await fetch('/api/notification');
                 const data = await response.json();
                 setNotifications(data);
-                console.log('Fetched notifications:', data); // Log fetched notifications
+                console.log('Fetched notifications:', data);
             } catch (error) {
                 console.error('Error fetching notifications:', error);
             }
         };
 
         fetchNotifications();
+
+        const pusher = new Pusher('1c63295fb2f1cc8e8963', {
+            cluster: 'us2'
+        });
+
+        const channel = pusher.subscribe('notifications');
+        channel.bind('new-notification', (data) => {
+            setNotifications(prevNotifications => [data, ...prevNotifications]);
+        });
+
+        return () => {
+            channel.unbind_all();
+            channel.unsubscribe();
+        };
     }, []);
 
     const handleNotificationClick = async (notification) => {

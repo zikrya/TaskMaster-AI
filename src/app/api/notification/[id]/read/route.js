@@ -1,5 +1,3 @@
-// src/app/api/notification/[id]/read/route.js
-
 import { prisma } from "../../../../../server/db";
 import { currentUser } from "@clerk/nextjs/server";
 

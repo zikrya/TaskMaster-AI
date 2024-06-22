@@ -25,7 +25,7 @@ export async function PUT(req, { params }) {
         const updatedTicket = await assignTicket(ticketId, assigneeId, 'generated');
 
         if (assigneeId) {
-            await prisma.notification.create({
+            const notification = await prisma.notification.create({
                 data: {
                     userId: assigneeId,
                     message: `You have been assigned a new ticket: "${updatedTicket.response}"`,
@@ -34,6 +34,9 @@ export async function PUT(req, { params }) {
             });
 
             // Trigger Pusher event
+            pusher.trigger('notifications', 'new-notification', notification);
+
+            // Trigger Pusher event for ticket assignment
             pusher.trigger('project-channel', 'ticket-assigned', {
                 projectId,
                 ticketId,
