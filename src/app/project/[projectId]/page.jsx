@@ -111,9 +111,12 @@ const ProjectPage = ({ params }) => {
         <FetchProjectProvider value={fetchProjectAndResponses}>
             <div className="min-h-screen flex flex-col">
                 <div className="bg-gray-200 w-full">
-                    <div className="pt-4">
+                    <div className="pt-4 relative">
                         <h1 className="text-3xl font-bold mb-3 px-4">{project.name}</h1>
-                        <div className="flex items-end px-4">
+                        <div className="absolute top-4 right-4">
+                            <CreateTicketForm projectId={projectId} userId={project.userId} fetchProjectAndResponses={fetchProjectAndResponses} />
+                        </div>
+                        <div className="flex items-end px-4 mt-4">
                             <button
                                 onClick={() => setView('kanban')}
                                 className={`mr-2 px-4 py-2 rounded-t-lg ${view === 'kanban' ? 'bg-white border-x border-t border-b-0 border-gray-300 text-black' : ' border-gray-300 text-gray-500'}`}
@@ -142,10 +145,6 @@ const ProjectPage = ({ params }) => {
                     ) : (
                         <ViewBoard project={project} columns={filteredColumns} fetchProjectAndResponses={fetchProjectAndResponses} />
                     )}
-                </div>
-                <div className="p-4">
-                    <h2 className="text-2xl font-semibold mb-4">Create a New Ticket</h2>
-                    <CreateTicketForm projectId={projectId} userId={project.userId} fetchProjectAndResponses={fetchProjectAndResponses} />
                 </div>
                 <ShareProject projectId={projectId} />
             </div>
