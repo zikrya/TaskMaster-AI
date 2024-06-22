@@ -1,9 +1,13 @@
-// components/CreateTicketForm.js
 import { useState } from 'react';
+import Modal from './modal';
 
 const CreateTicketForm = ({ projectId, userId, fetchProjectAndResponses }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +39,12 @@ const CreateTicketForm = ({ projectId, userId, fetchProjectAndResponses }) => {
   };
 
   return (
+    <div>
+      <button onClick={openModal} className="bg-white text-gray-400 px-4 py-2 rounded hover:bg-gray-100 transition">
+        New Ticket
+      </button>
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+      <h2 className="text-xl font-semibold mb-4">New Ticket</h2>
     <form onSubmit={handleSubmit} className="mb-4">
       <div className="mb-2">
         <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
@@ -64,6 +74,8 @@ const CreateTicketForm = ({ projectId, userId, fetchProjectAndResponses }) => {
         Create Ticket
       </button>
     </form>
+    </Modal>
+    </div>
   );
 };
 
