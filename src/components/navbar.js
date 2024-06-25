@@ -21,7 +21,7 @@ const NavBar = () => {
       <nav className="p-4 shadow-md bg-gradient-to-r from-purple-500 to-blue-500 bg-opacity-50 backdrop-blur-lg">
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-white font-bold text-xl">
-            <Link href="/">TaskMaster-AI</Link>
+            <Link href="/">DevLiftoff</Link>
           </div>
           <div className="hidden lg:flex space-x-8">
             {navigation.map((item) => (
