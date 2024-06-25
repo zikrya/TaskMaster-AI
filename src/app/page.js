@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <>
       <div className="flex flex-col items-center">
-        <div className="w-full bg-[#D3DCE6] border border-gray-300 shadow-sm rounded-md opacity-50 mt-[-4rem] pt-24" style={{ height: '55vh' }}>
+        <div className="w-full bg-[#D3DCE6] border border-gray-300 shadow-sm rounded-md opacity-50" style={{ height: '55vh' }}>
           <div className='flex h-full'>
             <div className='w-full md:w-1/3 self-center ml-3'>
               <h1 className='text-blue-900 text-4xl font-semibold leading-snug mb-6'>The New Age Project Manager</h1>
