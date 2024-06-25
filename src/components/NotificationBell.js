@@ -89,20 +89,28 @@ const NotificationBell = () => {
                 )}
             </button>
             {isOpen && (
-                <div ref={modalRef} className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg z-50">
+                <div ref={modalRef} className="absolute right-0 top-full mt-2 w-80 bg-white rounded-md shadow-lg z-50">
                     <div className="p-4">
-                        <h2 className="text-lg font-bold">Notifications</h2>
+                        <h2 className="text-lg font-semibold">Notifications</h2>
                         {notifications.length === 0 ? (
                             <p className="text-gray-500">No new notifications</p>
                         ) : (
-                            <ul className="space-y-2 max-h-60 overflow-y-auto">
-                                {notifications.map((notification) => (
+                            <ul className="divide-y divide-gray-200 max-h-60 overflow-y-auto">
+                                {notifications.map((notification, index) => (
                                     <li
                                         key={notification.id}
-                                        className={`p-2 rounded-md cursor-pointer ${notification.read ? 'bg-gray-100' : 'bg-yellow-100'}`}
+                                        className={`p-3 flex justify-between items-start cursor-pointer ${notification.read ? 'bg-gray-50' : 'bg-white'}`}
                                         onClick={() => handleNotificationClick(notification)}
                                     >
-                                        {notification.message}
+                                        <div>
+                                            <span className="block text-sm font-medium text-gray-700">{index + 1}. {notification.message}</span>
+                                            <span className={`block text-xs ${notification.read ? 'text-gray-500' : 'text-blue-500'}`}>
+                                                {notification.read ? 'Read' : 'Unread'}
+                                            </span>
+                                        </div>
+                                        {!notification.read && (
+                                            <span className="ml-2 h-3 w-3 bg-blue-500 rounded-full"></span>
+                                        )}
                                     </li>
                                 ))}
                             </ul>
@@ -115,3 +123,4 @@ const NotificationBell = () => {
 };
 
 export default NotificationBell;
+
