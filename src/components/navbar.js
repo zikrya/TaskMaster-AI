@@ -18,7 +18,7 @@ const NavBar = () => {
 
   return (
     <div className="relative z-40">
-      <nav className="w-9/12 mx-auto p-4 shadow-sm bg-gradient-to-r from-purple-300 to-blue-300 bg-opacity-25 backdrop-blur-lg rounded-md">
+      <nav className="w-full mx-auto p-4 shadow-sm bg-gradient-to-r from-purple-300 to-blue-300 bg-opacity-25 backdrop-blur-lg">
         <div className="flex justify-between items-center px-4">
           <div className="text-white font-bold text-xl">
             <Link href="/">DevLiftoff</Link>
