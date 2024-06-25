@@ -3,14 +3,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import { BellIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import Pusher from 'pusher-js';
-import { useAuth } from '@clerk/nextjs'; // Add this to access the current user
+import { useAuth } from '@clerk/nextjs';
 
 const NotificationBell = () => {
     const [notifications, setNotifications] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
     const modalRef = useRef(null);
-    const { isSignedIn } = useAuth(); // Add this to check if the user is signed in
+    const { isSignedIn } = useAuth();
 
     const fetchNotifications = async () => {
         try {
@@ -44,7 +44,7 @@ const NotificationBell = () => {
             channel.unbind_all();
             channel.unsubscribe();
         };
-    }, [isSignedIn]); // Fetch notifications when the user signs in
+    }, [isSignedIn]);
 
     const handleNotificationClick = async (notification) => {
         setIsOpen(false);
@@ -78,7 +78,7 @@ const NotificationBell = () => {
     }, []);
 
     return (
-        <div className="relative">
+        <div className="relative flex items-center">
             <button
                 className="relative focus:outline-none"
                 onClick={() => setIsOpen(!isOpen)}
@@ -115,4 +115,3 @@ const NotificationBell = () => {
 };
 
 export default NotificationBell;
-

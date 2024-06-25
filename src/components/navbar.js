@@ -4,7 +4,7 @@ import { Dialog } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { SignOutButton, useUser } from '@clerk/nextjs';
-import NotificationBell from './NotificationBell'
+import NotificationBell from './NotificationBell';
 
 const navigation = [
   { name: 'Projects', href: '/projects' },
@@ -18,8 +18,8 @@ const NavBar = () => {
 
   return (
     <div className="relative z-40">
-      <nav className="p-4 shadow-md bg-gradient-to-r from-purple-500 to-blue-500 bg-opacity-50 backdrop-blur-lg">
-        <div className="container mx-auto flex justify-between items-center">
+      <nav className="w-9/12 mx-auto p-4 shadow-sm bg-gradient-to-r from-purple-300 to-blue-300 bg-opacity-25 backdrop-blur-lg rounded-md">
+        <div className="flex justify-between items-center px-4">
           <div className="text-white font-bold text-xl">
             <Link href="/">DevLiftoff</Link>
           </div>
@@ -30,8 +30,8 @@ const NavBar = () => {
               </Link>
             ))}
           </div>
-          <div className="hidden lg:flex items-center space-x-4">
-            <NotificationBell />{/* Add the NotificationBell component here */}
+          <div className="hidden lg:flex space-x-4">
+            {user && <NotificationBell />}
             {user ? (
               <SignOutButton className="text-white hover:text-yellow-300 transition duration-300 ease-in-out hover:underline">Sign out</SignOutButton>
             ) : (
