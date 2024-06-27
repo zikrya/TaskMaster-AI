@@ -1,20 +1,16 @@
-'use client'
+'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from "@clerk/nextjs";
 import KanbanBoard from '../../../components/kanbanBoard';
 import ViewBoard from '../../../components/viewBoard';
 import { FetchProjectProvider } from '../../../components/FetchProjectContext';
-import ShareProject from '../../../components/ShareProject';
 import CreateTicketForm from '../../../components/CreateTicketForm';
 import SearchBar from '../../../components/SearchBar';
+import ProjectSettings from '../../../components/ProjectSettings'
 
 const ProjectPage = ({ params }) => {
     const { projectId } = params;
-    const { userId: currentUserId } = useAuth();
     const [project, setProject] = useState(null);
-    const [sharedUsers, setSharedUsers] = useState([]);
-    const [isOwner, setIsOwner] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [columns, setColumns] = useState([]);
@@ -36,8 +32,6 @@ const ProjectPage = ({ params }) => {
 
             const data = await response.json();
             setProject(data.project);
-            setSharedUsers(data.allUsers);
-            setIsOwner(data.project.user.clerkId === currentUserId);
 
             const toDoTasks = [
                 ...data.project.chatResponses.filter(resp => resp.status === "To Do").map(resp => ({
@@ -94,7 +88,7 @@ const ProjectPage = ({ params }) => {
         } finally {
             setIsLoading(false);
         }
-    }, [projectId, router, currentUserId]);
+    }, [projectId, router]);
 
     useEffect(() => {
         fetchProjectAndResponses();
@@ -109,25 +103,6 @@ const ProjectPage = ({ params }) => {
         tasks: filterTasks(column.tasks)
     }));
 
-    const handleRemoveUser = async (userId) => {
-        try {
-            const response = await fetch(`/api/projects/${projectId}/share/${userId}`, {
-                method: 'DELETE',
-            });
-
-            if (!response.ok) throw new Error('Failed to remove user');
-
-            const data = await response.json();
-            alert(data.message);
-
-            // Update shared users list after removal
-            setSharedUsers(sharedUsers.filter(user => user.id !== userId));
-        } catch (error) {
-            console.error('Error removing user:', error);
-            alert('Failed to remove user');
-        }
-    };
-
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
     if (!project) return <div>Project not found</div>;
@@ -138,6 +113,7 @@ const ProjectPage = ({ params }) => {
                 <div className="bg-gray-200 w-full">
                     <div className="pt-4 relative">
                         <h1 className="text-3xl font-bold mb-3 px-4">{project.name}</h1>
+                        <ProjectSettings projectId={projectId} fetchProjectAndResponses={fetchProjectAndResponses} />
                         <div className="absolute top-4 right-4">
                             <CreateTicketForm projectId={projectId} userId={project.userId} fetchProjectAndResponses={fetchProjectAndResponses} />
                         </div>
@@ -158,24 +134,6 @@ const ProjectPage = ({ params }) => {
                             </button>
                         </div>
                         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-                        <div className="mt-4">
-                            <h2 className="text-lg font-semibold">Shared Users</h2>
-                            <ul className="list-disc pl-6">
-                                {sharedUsers.map(user => (
-                                    <li key={user.id} className="flex items-center justify-between">
-                                        <span>{user.username || user.email} - {user.role}</span>
-                                        {isOwner && user.role !== 'Owner' && (
-                                            <button
-                                                onClick={() => handleRemoveUser(user.id)}
-                                                className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition"
-                                            >
-                                                Remove
-                                            </button>
-                                        )}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
                     </div>
                 </div>
                 <div className="flex-grow">
@@ -189,7 +147,6 @@ const ProjectPage = ({ params }) => {
                         <ViewBoard project={project} columns={filteredColumns} fetchProjectAndResponses={fetchProjectAndResponses} />
                     )}
                 </div>
-                <ShareProject projectId={projectId} />
             </div>
         </FetchProjectProvider>
     );
