@@ -54,7 +54,13 @@ export async function GET(req, { params }) {
       });
     }
 
-    return new Response(JSON.stringify(project), {
+    // Include the owner in the shared users list for display purposes
+    const allUsers = [
+      { ...project.user, role: 'Owner' },
+      ...project.sharedWith.map(shared => ({ ...shared.user, role: 'Collaborator' }))
+    ];
+
+    return new Response(JSON.stringify({ project, allUsers }), {
       headers: { 'Content-Type': 'application/json' },
       status: 200,
     });

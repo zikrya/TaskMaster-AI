@@ -11,6 +11,7 @@ import SearchBar from '../../../components/SearchBar';
 const ProjectPage = ({ params }) => {
     const { projectId } = params;
     const [project, setProject] = useState(null);
+    const [sharedUsers, setSharedUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [columns, setColumns] = useState([]);
@@ -31,16 +32,17 @@ const ProjectPage = ({ params }) => {
             if (!response.ok) throw new Error('Failed to fetch project');
 
             const data = await response.json();
-            setProject(data);
+            setProject(data.project);
+            setSharedUsers(data.allUsers);
 
             const toDoTasks = [
-                ...data.chatResponses.filter(resp => resp.status === "To Do").map(resp => ({
+                ...data.project.chatResponses.filter(resp => resp.status === "To Do").map(resp => ({
                     id: resp.id,
                     title: resp.response,
                     status: resp.status,
                     type: 'generated'
                 })),
-                ...data.customTickets.filter(ticket => ticket.status === "To Do").map(ticket => ({
+                ...data.project.customTickets.filter(ticket => ticket.status === "To Do").map(ticket => ({
                     id: ticket.id,
                     title: ticket.title,
                     status: ticket.status,
@@ -49,13 +51,13 @@ const ProjectPage = ({ params }) => {
             ];
 
             const inProgressTasks = [
-                ...data.chatResponses.filter(resp => resp.status === "In Progress").map(resp => ({
+                ...data.project.chatResponses.filter(resp => resp.status === "In Progress").map(resp => ({
                     id: resp.id,
                     title: resp.response,
                     status: resp.status,
                     type: 'generated'
                 })),
-                ...data.customTickets.filter(ticket => ticket.status === "In Progress").map(ticket => ({
+                ...data.project.customTickets.filter(ticket => ticket.status === "In Progress").map(ticket => ({
                     id: ticket.id,
                     title: ticket.title,
                     status: ticket.status,
@@ -64,13 +66,13 @@ const ProjectPage = ({ params }) => {
             ];
 
             const doneTasks = [
-                ...data.chatResponses.filter(resp => resp.status === "Done").map(resp => ({
+                ...data.project.chatResponses.filter(resp => resp.status === "Done").map(resp => ({
                     id: resp.id,
                     title: resp.response,
                     status: resp.status,
                     type: 'generated'
                 })),
-                ...data.customTickets.filter(ticket => ticket.status === "Done").map(ticket => ({
+                ...data.project.customTickets.filter(ticket => ticket.status === "Done").map(ticket => ({
                     id: ticket.id,
                     title: ticket.title,
                     status: ticket.status,
@@ -132,11 +134,19 @@ const ProjectPage = ({ params }) => {
                                 View 2
                             </button>
                         </div>
+                        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                        <div className="mt-4">
+                            <h2 className="text-lg font-semibold">Shared Users</h2>
+                            <ul className="list-disc pl-6">
+                                {sharedUsers.map(user => (
+                                    <li key={user.id}>
+                                        {user.username || user.email} - {user.role}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
                 </div>
-                <div className='content-center'>
-                    <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-                    </div>
                 <div className="flex-grow">
                     {view === 'kanban' ? (
                         <KanbanBoard
