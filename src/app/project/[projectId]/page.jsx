@@ -1,6 +1,7 @@
-'use client';
+'use client'
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from "@clerk/nextjs";
 import KanbanBoard from '../../../components/kanbanBoard';
 import ViewBoard from '../../../components/viewBoard';
 import { FetchProjectProvider } from '../../../components/FetchProjectContext';
@@ -10,8 +11,10 @@ import SearchBar from '../../../components/SearchBar';
 
 const ProjectPage = ({ params }) => {
     const { projectId } = params;
+    const { userId: currentUserId } = useAuth();
     const [project, setProject] = useState(null);
     const [sharedUsers, setSharedUsers] = useState([]);
+    const [isOwner, setIsOwner] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [columns, setColumns] = useState([]);
@@ -34,6 +37,7 @@ const ProjectPage = ({ params }) => {
             const data = await response.json();
             setProject(data.project);
             setSharedUsers(data.allUsers);
+            setIsOwner(data.project.user.clerkId === currentUserId);
 
             const toDoTasks = [
                 ...data.project.chatResponses.filter(resp => resp.status === "To Do").map(resp => ({
@@ -90,7 +94,7 @@ const ProjectPage = ({ params }) => {
         } finally {
             setIsLoading(false);
         }
-    }, [projectId, router]);
+    }, [projectId, router, currentUserId]);
 
     useEffect(() => {
         fetchProjectAndResponses();
@@ -104,6 +108,25 @@ const ProjectPage = ({ params }) => {
         ...column,
         tasks: filterTasks(column.tasks)
     }));
+
+    const handleRemoveUser = async (userId) => {
+        try {
+            const response = await fetch(`/api/projects/${projectId}/share/${userId}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) throw new Error('Failed to remove user');
+
+            const data = await response.json();
+            alert(data.message);
+
+            // Update shared users list after removal
+            setSharedUsers(sharedUsers.filter(user => user.id !== userId));
+        } catch (error) {
+            console.error('Error removing user:', error);
+            alert('Failed to remove user');
+        }
+    };
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
@@ -139,8 +162,16 @@ const ProjectPage = ({ params }) => {
                             <h2 className="text-lg font-semibold">Shared Users</h2>
                             <ul className="list-disc pl-6">
                                 {sharedUsers.map(user => (
-                                    <li key={user.id}>
-                                        {user.username || user.email} - {user.role}
+                                    <li key={user.id} className="flex items-center justify-between">
+                                        <span>{user.username || user.email} - {user.role}</span>
+                                        {isOwner && user.role !== 'Owner' && (
+                                            <button
+                                                onClick={() => handleRemoveUser(user.id)}
+                                                className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition"
+                                            >
+                                                Remove
+                                            </button>
+                                        )}
                                     </li>
                                 ))}
                             </ul>

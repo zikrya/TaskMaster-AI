@@ -26,7 +26,7 @@ export async function GET(req, { params }) {
       },
       include: {
         chatResponses: true,
-        customTickets: true, // Include custom tickets
+        customTickets: true,
         user: true,
         sharedWith: {
           include: {
@@ -43,7 +43,6 @@ export async function GET(req, { params }) {
       });
     }
 
-    // Check if the current user is the owner or a shared user of the project
     const isOwner = project.user.clerkId === user.id;
     const isSharedUser = project.sharedWith.some(shared => shared.user.clerkId === user.id);
 
@@ -54,13 +53,12 @@ export async function GET(req, { params }) {
       });
     }
 
-    // Include the owner in the shared users list for display purposes
     const allUsers = [
       { ...project.user, role: 'Owner' },
-      ...project.sharedWith.map(shared => ({ ...shared.user, role: 'Collaborator' }))
+      ...project.sharedWith.map(shared => ({ ...shared.user, role: 'Contributor' })),
     ];
 
-    return new Response(JSON.stringify({ project, allUsers }), {
+    return new Response(JSON.stringify({ project, allUsers, currentUserId: user.id }), {
       headers: { 'Content-Type': 'application/json' },
       status: 200,
     });
