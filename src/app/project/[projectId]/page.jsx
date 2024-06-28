@@ -6,7 +6,7 @@ import ViewBoard from '../../../components/viewBoard';
 import { FetchProjectProvider } from '../../../components/FetchProjectContext';
 import CreateTicketForm from '../../../components/CreateTicketForm';
 import SearchBar from '../../../components/SearchBar';
-import ProjectSettings from '../../../components/ProjectSettings'
+import ProjectSettings from '../../../components/ProjectSettings';
 
 const ProjectPage = ({ params }) => {
     const { projectId } = params;
@@ -107,13 +107,12 @@ const ProjectPage = ({ params }) => {
     if (error) return <div>Error: {error}</div>;
     if (!project) return <div>Project not found</div>;
 
-    return (
+ return (
         <FetchProjectProvider value={fetchProjectAndResponses}>
             <div className="min-h-screen flex flex-col">
                 <div className="bg-gray-200 w-full">
                     <div className="pt-4 relative">
                         <h1 className="text-3xl font-bold mb-3 px-4">{project.name}</h1>
-                        <ProjectSettings projectId={projectId} fetchProjectAndResponses={fetchProjectAndResponses} />
                         <div className="absolute top-4 right-4">
                             <CreateTicketForm projectId={projectId} userId={project.userId} fetchProjectAndResponses={fetchProjectAndResponses} />
                         </div>
@@ -132,19 +131,32 @@ const ProjectPage = ({ params }) => {
                             >
                                 View 2
                             </button>
+                            <button
+                                onClick={() => setView('ProjectSettings')}
+                                className={`mr-2 px-4 py-2 rounded-t-lg ${view === 'ProjectSettings' ? 'bg-white border-x border-t border-b-0 border-gray-300 text-black' : ' border-gray-300 text-gray-500'}`}
+                                style={{ borderBottomColor: view === 'ProjectSettings' ? 'white' : '' }}
+                            >
+                                Settings
+                            </button>
                         </div>
-                        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
                     </div>
                 </div>
+                <div className='content-center'>
+                    <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                </div>
                 <div className="flex-grow">
-                    {view === 'kanban' ? (
+                    {view === 'kanban' && (
                         <KanbanBoard
                             columns={filteredColumns}
                             projectId={projectId}
                             fetchProjectAndResponses={fetchProjectAndResponses}
                         />
-                    ) : (
+                    )}
+                    {view === 'viewBoard' && (
                         <ViewBoard project={project} columns={filteredColumns} fetchProjectAndResponses={fetchProjectAndResponses} />
+                    )}
+                    {view === 'ProjectSettings' && (
+                        <ProjectSettings projectId={projectId} fetchProjectAndResponses={fetchProjectAndResponses} />
                     )}
                 </div>
             </div>

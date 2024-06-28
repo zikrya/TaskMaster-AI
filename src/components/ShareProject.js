@@ -26,15 +26,18 @@ const ShareProject = ({ projectId }) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="flex">
         <input
           type="text"
           value={emailOrUsername}
           onChange={handleChange}
           placeholder="Enter username or email"
-          className="p-2 border rounded-l"
+          className="p-1 border rounded-l w-full"
         />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded-r hover:bg-blue-600">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white p-1 rounded-r hover:bg-blue-600 text-xs"
+        >
           Share
         </button>
       </form>
