@@ -77,6 +77,8 @@ const NotificationBell = () => {
         };
     }, []);
 
+    const unreadCount = notifications.filter(notification => !notification.read).length;
+
     return (
         <div className="relative flex items-center">
             <button
@@ -84,8 +86,10 @@ const NotificationBell = () => {
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <BellIcon className="h-6 w-6 text-white" />
-                {notifications.length > 0 && (
-                    <span className="absolute top-0 right-0 block h-2 w-2 rounded-full ring-2 ring-white bg-red-500"></span>
+                {unreadCount > 0 && (
+                    <span className="absolute bottom-4 left-3 flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-white text-xs">
+                        {unreadCount}
+                    </span>
                 )}
             </button>
             {isOpen && (
