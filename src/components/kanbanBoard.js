@@ -21,7 +21,7 @@ const KanbanBoard = ({ columns, projectId, fetchProjectAndResponses }) => {
                         {column.tasks.map((task) => (
                             <div
                                 key={task.id}
-                                className="bg-white p-4 rounded-md shadow hover:shadow-lg transition-shadow duration-200 cursor-pointer"
+                                className="bg-white p-4 rounded-md shadow transition-transform duration-200 cursor-pointer transform hover:scale-105"
                                 onClick={() => handleTaskClick(task)}
                             >
                                 <p className="text-gray-800">{task.title}</p>
