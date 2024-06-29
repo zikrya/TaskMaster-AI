@@ -7,6 +7,7 @@ import { FetchProjectProvider } from '../../../components/FetchProjectContext';
 import CreateTicketForm from '../../../components/CreateTicketForm';
 import SearchBar from '../../../components/SearchBar';
 import ProjectSettings from '../../../components/ProjectSettings';
+import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 
 const ProjectPage = ({ params }) => {
     const { projectId } = params;
@@ -136,7 +137,7 @@ const ProjectPage = ({ params }) => {
                                 className={`mr-2 px-4 py-2 rounded-t-lg ${view === 'ProjectSettings' ? 'bg-white border-x border-t border-b-0 border-gray-300 text-black' : ' border-gray-300 text-gray-500'}`}
                                 style={{ borderBottomColor: view === 'ProjectSettings' ? 'white' : '' }}
                             >
-                                Settings
+                                <Cog6ToothIcon className="h-6 w-6 text-black"/>
                             </button>
                         </div>
                     </div>
