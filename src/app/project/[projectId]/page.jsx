@@ -134,7 +134,7 @@ const ProjectPage = ({ params }) => {
                             </button>
                             <button
                                 onClick={() => setView('ProjectSettings')}
-                                className={`mr-2 px-4 py-2 rounded-t-lg ${view === 'ProjectSettings' ? 'bg-white border-x border-t border-b-0 border-gray-300 text-black' : ' border-gray-300 text-gray-500'}`}
+                                className={`mr-2 px-4 py-2 rounded-t-lg ${view === 'ProjectSettings' ? 'bg-[#7A79EA] border-x border-t border-b-0 border-gray-300 text-black' : ' border-gray-300 text-gray-500'}`}
                                 style={{ borderBottomColor: view === 'ProjectSettings' ? 'white' : '' }}
                             >
                                 <Cog6ToothIcon className="h-6 w-6 text-black"/>
