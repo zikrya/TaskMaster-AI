@@ -58,14 +58,11 @@ export async function GET(req, { params }) {
       ...project.sharedWith.map(shared => ({ ...shared.user, role: 'Contributor' })),
     ];
 
-    console.log("Returning project and users data", { project, allUsers });
-
     return new Response(JSON.stringify({ project, allUsers }), {
       headers: { 'Content-Type': 'application/json' },
       status: 200,
     });
   } catch (error) {
-    console.error("Error fetching project:", error);
     return new Response(JSON.stringify({ message: 'Failed to retrieve project' }), {
       headers: { 'Content-Type': 'application/json' },
       status: 500,
