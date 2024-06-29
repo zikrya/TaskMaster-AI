@@ -58,7 +58,9 @@ export async function GET(req, { params }) {
       ...project.sharedWith.map(shared => ({ ...shared.user, role: 'Contributor' })),
     ];
 
-    return new Response(JSON.stringify({ project, allUsers, currentUserId: user.id }), {
+    console.log("Returning project and users data", { project, allUsers });
+
+    return new Response(JSON.stringify({ project, allUsers }), {
       headers: { 'Content-Type': 'application/json' },
       status: 200,
     });

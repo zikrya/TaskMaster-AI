@@ -12,6 +12,7 @@ import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 const ProjectPage = ({ params }) => {
     const { projectId } = params;
     const [project, setProject] = useState(null);
+    const [sharedUsers, setSharedUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [columns, setColumns] = useState([]);
@@ -32,7 +33,9 @@ const ProjectPage = ({ params }) => {
             if (!response.ok) throw new Error('Failed to fetch project');
 
             const data = await response.json();
+            console.log('Fetched project data:', data);
             setProject(data.project);
+            setSharedUsers(data.allUsers);
 
             const toDoTasks = [
                 ...data.project.chatResponses.filter(resp => resp.status === "To Do").map(resp => ({
@@ -108,7 +111,7 @@ const ProjectPage = ({ params }) => {
     if (error) return <div>Error: {error}</div>;
     if (!project) return <div>Project not found</div>;
 
- return (
+    return (
         <FetchProjectProvider value={fetchProjectAndResponses}>
             <div className="min-h-screen flex flex-col">
                 <div className="bg-gray-200 w-full">
@@ -157,7 +160,7 @@ const ProjectPage = ({ params }) => {
                         <ViewBoard project={project} columns={filteredColumns} fetchProjectAndResponses={fetchProjectAndResponses} />
                     )}
                     {view === 'ProjectSettings' && (
-                        <ProjectSettings projectId={projectId} fetchProjectAndResponses={fetchProjectAndResponses} />
+                        <ProjectSettings projectId={projectId} fetchProjectAndResponses={fetchProjectAndResponses} sharedUsers={sharedUsers} />
                     )}
                 </div>
             </div>

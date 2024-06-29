@@ -27,6 +27,7 @@ const TicketPage = ({ params }) => {
                 if (!response.ok) throw new Error('Failed to fetch ticket');
 
                 const data = await response.json();
+                console.log("Fetched ticket data:", data);
                 setTicket(data);
                 setStatus(data.status || '');
                 setAssigneeId(data.assigneeId || '');
@@ -59,12 +60,17 @@ const TicketPage = ({ params }) => {
                     const descriptionResponse = await fetch(`/api/projects/${projectId}/ticket/${ticketId}/description`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ projectDescription: projectData.description, ticketResponse: data.response })
+                        body: JSON.stringify({ projectDescription: projectData.project.description, ticketResponse: data.response })
                     });
 
-                    if (!descriptionResponse.ok) throw new Error('Failed to generate description');
+                    if (!descriptionResponse.ok) {
+                        const descriptionError = await descriptionResponse.json();
+                        console.error("Description generation error:", descriptionError);
+                        throw new Error(descriptionError.message);
+                    }
 
                     const descriptionData = await descriptionResponse.json();
+                    console.log("Generated description data:", descriptionData);
                     setTicket(prev => ({ ...prev, description: descriptionData.description }));
                 }
             } catch (error) {
@@ -166,6 +172,7 @@ const TicketPage = ({ params }) => {
             if (!response.ok) throw new Error('Failed to generate more description');
 
             const data = await response.json();
+            console.log("Generated more description data:", data);
             setTicket(prev => ({ ...prev, description: prev.description + " " + data.description }));
         } catch (error) {
             console.error('Error generating more description:', error);

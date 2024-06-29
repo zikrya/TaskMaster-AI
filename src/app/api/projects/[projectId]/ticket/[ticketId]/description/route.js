@@ -8,6 +8,7 @@ export async function POST(req, { params }) {
         const body = await req.json();
         projectDescription = body.projectDescription;
         ticketResponse = body.ticketResponse;
+        console.log("Parsed request body:", { projectDescription, ticketResponse });
     } catch (error) {
         console.error("Error parsing JSON from request:", error);
         return new Response(JSON.stringify({ message: "Bad request, JSON parsing failed" }), {
