@@ -36,7 +36,7 @@ const ShareProject = ({ projectId }) => {
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white p-1 rounded-r hover:bg-blue-600 text-xs"
+          className="bg-[#7A79EA] text-white p-1 rounded-r hover:bg-indigo-700 text-xs"
         >
           Share
         </button>
