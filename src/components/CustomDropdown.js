@@ -25,6 +25,10 @@ const CustomDropdown = ({ options, selected, onChange }) => {
         };
     }, []);
 
+    useEffect(() => {
+        setSelectedOption(selected);
+    }, [selected]);
+
     const handleOptionClick = (option) => {
         setSelectedOption(option);
         onChange(option);
@@ -41,8 +45,8 @@ const CustomDropdown = ({ options, selected, onChange }) => {
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-auto py-2 px-4 flex justify-between items-center bg-white"
             >
-                <div className={`px-2 py-1 flex items-center rounded ${getStatusStyles(selectedOption)}`}>
-                    {selectedOption}
+                <div className={`px-2 py-1 flex items-center rounded ${getStatusStyles(selectedOption.label || selectedOption)}`}>
+                    {selectedOption.label || selectedOption}
                     <FaChevronDown size={10} className="ml-1" />
                 </div>
             </button>
@@ -50,12 +54,12 @@ const CustomDropdown = ({ options, selected, onChange }) => {
                 <div className="absolute z-10 mt-1 w-6/12 bg-white border border-gray-300 rounded shadow-lg">
                     {options.map((option) => (
                         <div
-                            key={option}
+                            key={option.value || option}
                             onClick={() => handleOptionClick(option)}
                             className={`px-4 py-2 cursor-pointer hover:bg-gray-100 flex justify-between items-center`}
                         >
-                            <div className={`px-2 py-1 flex items-center rounded ${getStatusStyles(option)}`}>
-                                {option}
+                            <div className={`px-2 py-1 flex items-center rounded ${getStatusStyles(option.label || option)}`}>
+                                {option.label || option}
                             </div>
                         </div>
                     ))}
@@ -66,3 +70,4 @@ const CustomDropdown = ({ options, selected, onChange }) => {
 };
 
 export default CustomDropdown;
+

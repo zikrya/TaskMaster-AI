@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PusherSubscriber from './PusherSubscriber';
+import CustomDropdown from './CustomDropdown';
 
 const ViewBoard = ({ project, fetchProjectAndResponses }) => {
     const router = useRouter();
@@ -38,8 +39,7 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
         router.push(url);
     };
 
-    const handleStatusChange = async (e, task) => {
-        const newStatus = e.target.value;
+    const handleStatusChange = async (newStatus, task) => {
         const url = task.type === 'generated'
             ? `/api/projects/${project.id}/ticket/${task.id}/status`
             : `/api/projects/${project.id}/ticket/custom-ticket/${task.id}/status`;
@@ -65,8 +65,7 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
         }
     };
 
-    const handleAssigneeChange = async (e, task) => {
-        const assigneeId = e.target.value;
+    const handleAssigneeChange = async (newAssignee, task) => {
         const url = task.type === 'generated'
             ? `/api/projects/${project.id}/ticket/${task.id}/assign`
             : `/api/projects/${project.id}/ticket/custom-ticket/${task.id}/assign`;
@@ -75,7 +74,7 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ assigneeId }),
+                body: JSON.stringify({ assigneeId: newAssignee.value }),
             });
 
             if (!response.ok) {
@@ -87,7 +86,7 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
 
             setTasks(prevTasks => {
                 const updatedTasks = prevTasks.map(t =>
-                    t.id === task.id ? { ...t, assigneeId } : t
+                    t.id === task.id ? { ...t, assigneeId: newAssignee.value } : t
                 );
                 return updatedTasks;
             });
@@ -122,45 +121,38 @@ const ViewBoard = ({ project, fetchProjectAndResponses }) => {
                 onTicketAssigned={handleTicketAssigned}
                 onStatusUpdate={handleStatusUpdated}
             />
-            <table className="min-w-full bg-white border border-gray-200">
-                <thead>
-                    <tr className="border-b border-gray-300">
-                        <th className="py-2 px-4 border-r border-gray-300 text-left">Title</th>
-                        <th className="py-2 px-4 border-r border-gray-300 text-left">Assignees</th>
-                        <th className="py-2 px-4 text-left">Status</th>
+            <table className="min-w-full bg-white">
+                <thead className='rounded-lg'>
+                    <tr className="">
+                        <th className="py-2 px-4 text-left border bg-gray-200 text-gray-500">Title</th>
+                        <th className="py-2 px-4 text-left border bg-gray-200 text-gray-500">Assignees</th>
+                        <th className="py-2 px-4 text-left border bg-gray-200 text-gray-500">Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {[...tasks].map((task, index) => (
                         <tr
                             key={task.id}
-                            className="cursor-pointer hover:bg-gray-100 transition-colors duration-200 border-b border-gray-300"
+                            className="cursor-pointer transition-colors duration-200"
                         >
-                            <td className="py-2 px-4 border-r border-gray-300" onClick={() => handleTaskClick(task)}>
+                            <td className="py-2 px-4 text-[#7A79EA] hover:text-gray-500" onClick={() => handleTaskClick(task)}>
                                 {`${index + 1}. ${task.response || task.title}`}
                             </td>
-                            <td className="py-2 px-4 border-r border-gray-300">
-                                <select
-                                    value={task.assigneeId || ''}
-                                    onChange={(e) => handleAssigneeChange(e, task)}
-                                    className="w-full p-2 border rounded"
-                                >
-                                    <option value="">Unassigned</option>
-                                    {users.map(user => (
-                                        <option key={user.id} value={user.id}>{user.username || user.email}</option>
-                                    ))}
-                                </select>
+                            <td className="py-2 px-4">
+                                <CustomDropdown
+                                    options={[{ label: 'Unassigned', value: '' }, ...users.map(user => ({ label: user.username || user.email, value: user.id }))]}
+                                    selected={users.find(user => user.id === task.assigneeId)?.username || 'Unassigned'}
+                                    onChange={(selected) => handleAssigneeChange(selected, task)}
+                                />
                             </td>
                             <td className="py-2 px-4">
-                                <select
-                                    value={statuses[task.id] || task.status}
-                                    onChange={(e) => handleStatusChange(e, task)}
-                                    className="w-full p-2 border rounded"
-                                >
-                                    <option value="To Do">To Do</option>
-                                    <option value="In Progress">In Progress</option>
-                                    <option value="Done">Done</option>
-                                </select>
+                                <div>
+                                    <CustomDropdown
+                                        options={['To Do', 'In Progress', 'Done']}
+                                        selected={statuses[task.id] || task.status}
+                                        onChange={(newStatus) => handleStatusChange(newStatus, task)}
+                                    />
+                                </div>
                             </td>
                         </tr>
                     ))}
