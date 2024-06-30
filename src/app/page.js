@@ -3,6 +3,7 @@ import React from 'react'
 import Link from 'next/link'
 import Cards from '../components/Cards'
 import Image from 'next/image';
+import Footer from '../components/Footer'
 
 export default function Home() {
   return (
@@ -25,6 +26,7 @@ export default function Home() {
         <div className='mt-4'>
           <Cards />
         </div>
+        <Footer />
       </div>
     </>
   )
