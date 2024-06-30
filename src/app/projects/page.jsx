@@ -128,7 +128,7 @@ const Projects = () => {
                         required
                         className="w-full p-2 border rounded"
                     />
-                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                    <button type="submit" className="bg-[#7a79ea] text-white px-4 py-2 rounded hover:bg-blue-600 transition">
                         Create and Describe
                     </button>
                 </form>
@@ -139,12 +139,12 @@ const Projects = () => {
                 {ownedProjects.map((project) => (
                     <div key={project.id} className="flex-none w-64">
                         <div className="flex items-center box-border h-32 w-full p-4 bg-white shadow-md rounded relative">
-                            <div className="absolute inset-y-0 left-0 w-4 bg-purple-200 rounded-sm"></div>
+                            <div className="absolute inset-y-0 left-0 w-4 bg-[#7a79ea] rounded-sm"></div>
                             <Image src="/clipboard.png" lt="Icon" width={24} height={24} className="absolute left-[4px] top-[1px]" />
                             <Link href={`/project/${project.id}`}>
                                 <div className="ml-8">
-                                    <p className="text-base font-semibold text-blue-600">{project.name}</p>
-                                    <p className="text-sm font-light text-blue-400">{project.description}</p>
+                                    <p className="text-base font-semibold text-[#7a79ea]">{project.name}</p>
+                                    <p className="text-sm font-light text-[#4d4cd0]">{project.description}</p>
                                 </div>
                             </Link>
                         </div>
@@ -156,7 +156,7 @@ const Projects = () => {
                 {sharedProjects.map((project) => (
                     <div key={project.id} className="flex-none w-64">
                         <div className="flex items-center box-border h-32 w-full p-4 bg-white shadow-md rounded relative">
-                            <div className="absolute inset-y-0 left-0 w-4 bg-purple-200 rounded-sm"></div>
+                            <div className="absolute inset-y-0 left-0 w-4 bg-[#7a79ea] rounded-sm"></div>
                             <Image src="/clipboard.png" lt="Icon" width={24} height={24} className="absolute left-[4px] top-[1px]" />
                             <Link href={`/project/${project.id}`}>
                                 <div className="ml-8">

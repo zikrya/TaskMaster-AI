@@ -69,7 +69,7 @@ const CreateTicketForm = ({ projectId, userId, fetchProjectAndResponses }) => {
       </div>
       <button
         type="submit"
-        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        className="px-4 py-2 bg-[#7a79ea] text-white rounded-md hover:bg-blue-600"
       >
         Create Ticket
       </button>
