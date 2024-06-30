@@ -4,7 +4,9 @@ import { useRouter } from 'next/navigation';
 import Modal from '../../components/modal';
 import Link from 'next/link';
 import Image from 'next/image';
-import ImageClerk from '../../components/ImageClerk'
+import ImageClerk from '../../components/ImageClerk';
+import ReactLoading from 'react-loading';
+
 const Projects = () => {
     const [isModalOpen, setModalOpen] = useState(false);
     const [projectName, setProjectName] = useState('');
@@ -13,6 +15,7 @@ const Projects = () => {
     const [ownedProjects, setOwnedProjects] = useState([]);
     const [sharedProjects, setSharedProjects] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false); // New state for loading bar
     const [error, setError] = useState(null);
     const router = useRouter();
 
@@ -30,6 +33,8 @@ const Projects = () => {
             return;
         }
 
+        setIsSubmitting(true); // Show loading bar
+
         try {
             const projectResponse = await fetch('/api/projects/create', {
                 method: 'POST',
@@ -40,6 +45,7 @@ const Projects = () => {
             if (!projectResponse.ok) {
                 const { message } = await projectResponse.json();
                 alert(`Failed to create project: ${message}`);
+                setIsSubmitting(false); // Hide loading bar
                 return;
             }
 
@@ -54,6 +60,7 @@ const Projects = () => {
             if (!chatResponse.ok) {
                 const { message } = await chatResponse.json();
                 alert(`Failed to generate chat response: ${message}`);
+                setIsSubmitting(false); // Hide loading bar
                 return;
             }
 
@@ -64,6 +71,8 @@ const Projects = () => {
         } catch (error) {
             console.error('Error handling the form submission:', error);
             alert('An unexpected error occurred. Please try again later.');
+        } finally {
+            setIsSubmitting(false); // Hide loading bar
         }
     }
 
@@ -128,8 +137,12 @@ const Projects = () => {
                         required
                         className="w-full p-2 border rounded"
                     />
-                    <button type="submit" className="bg-[#7a79ea] text-white px-4 py-2 rounded hover:bg-blue-600 transition">
-                        Create and Describe
+                    <button type="submit" className="bg-[#7a79ea] text-white px-4 py-2 rounded hover:bg-indigo-200 transition" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                            <ReactLoading type="spin" color="#ffffff" height={24} width={24} className="mx-auto" />
+                        ) : (
+                            'Create and Describe'
+                        )}
                     </button>
                 </form>
             </Modal>
