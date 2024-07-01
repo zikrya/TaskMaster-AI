@@ -69,7 +69,7 @@ const CreateTicketForm = ({ projectId, userId, fetchProjectAndResponses }) => {
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+              className="mt-1 p-2 block w-full border border-gray-300 rounded-md h-96"
               required
             />
           </div>

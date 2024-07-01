@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Cards from '../components/Cards'
 import Image from 'next/image';
 import Footer from '../components/Footer'
+import FeatureGrid from '../components/FeatureGrid'
 
 export default function Home() {
   return (
@@ -25,6 +26,9 @@ export default function Home() {
         </div>
         <div className='mt-4'>
           <Cards />
+        </div>
+        <div className='mt-10'>
+          <FeatureGrid />
         </div>
         <Footer />
       </div>

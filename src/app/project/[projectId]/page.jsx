@@ -83,7 +83,7 @@ const ProjectPage = ({ params }) => {
             ];
 
             setColumns([
-                { name: 'To Do', tasks: toDoTasks },
+                { name: 'To Do', tasks: toDoTasks},
                 { name: 'In Progress', tasks: inProgressTasks },
                 { name: 'Done', tasks: doneTasks },
             ]);

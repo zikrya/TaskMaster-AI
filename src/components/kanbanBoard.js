@@ -28,9 +28,7 @@ const KanbanBoard = ({ columns, projectId, fetchProjectAndResponses }) => {
                             </div>
                         ))}
                         {column.tasks.length === 0 && (
-                            <div className="bg-white p-4 rounded-md shadow">
                                 <p className="text-gray-400 italic">No tasks</p>
-                            </div>
                         )}
                     </div>
                 </div>

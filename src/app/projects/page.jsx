@@ -112,7 +112,7 @@ const Projects = () => {
             </div>
             <div className="border-t border-gray-300"></div>
             <Modal isOpen={isModalOpen} onClose={closeModal}>
-                <h2 className="text-xl font-semibold mb-4">New Project</h2>
+                <h2 className="text-xl font-semibold mb-4 text-[#7a79ea]">New Project</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
                         type="text"
@@ -141,7 +141,7 @@ const Projects = () => {
                         {isSubmitting ? (
                             <ReactLoading type="spin" color="#ffffff" height={24} width={24} className="mx-auto" />
                         ) : (
-                            'Create and Describe'
+                            'Generate Project'
                         )}
                     </button>
                 </form>
