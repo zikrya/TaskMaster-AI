@@ -1,21 +1,58 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { SignOutButton, useUser } from '@clerk/nextjs';
 import NotificationBell from './NotificationBell';
+import { motion } from 'framer-motion';
 
 const navigation = [
-  { name: 'Features', href: '#feature-grid' }, // Update href to point to the FeatureGrid component
+  { name: 'Features', href: '#feature-grid' },
 ];
 
 const NavBar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user } = useUser();
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [scrollTimeout, setScrollTimeout] = useState(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+
+      const currentScrollY = window.scrollY;
+
+      setScrollTimeout(setTimeout(() => {
+        if (currentScrollY > lastScrollY) {
+          setShowNavbar(false);
+        } else {
+          setShowNavbar(true);
+        }
+        setLastScrollY(currentScrollY);
+      }, 50)); // Adjust the delay time here
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+    };
+  }, [lastScrollY, scrollTimeout]);
 
   return (
-    <div className="relative z-40">
+    <motion.div
+      initial={{ opacity: 1, y: 0 }}
+      animate={{ opacity: showNavbar ? 1 : 0, y: showNavbar ? 0 : -100 }}
+      transition={{ duration: 0.3 }}
+      className="relative z-40"
+    >
       <nav className="w-full mx-auto p-4 shadow-sm bg-[#7A79EA] backdrop-blur-lg">
         <div className="flex justify-between items-center px-4">
           <div className="text-white font-bold text-xl">
@@ -43,7 +80,7 @@ const NavBar = () => {
             {user ? (
               <SignOutButton className="text-white hover:text-yellow-300 transition duration-300 ease-in-out hover:underline">Sign out</SignOutButton>
             ) : (
-              <Link href="/sign-in" className="border-white/6 px-4 py-2 backdrop-blur sm:rounded-lg sm:border bg-white/5 text-white text-xs transition-all duration-200 hover:bg-white/10 hover:scale-105">
+              <Link href="/sign-in" className=" text-white bg-gradient-to-r from-purple-200 via-purple-300 to-purple-400 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                 Log in
               </Link>
             )}
@@ -98,7 +135,7 @@ const NavBar = () => {
           </div>
         </Dialog>
       </nav>
-    </div>
+    </motion.div>
   );
 };
 
