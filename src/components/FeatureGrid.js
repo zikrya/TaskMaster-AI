@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MdOutlineViewSidebar, MdDashboard, MdAutorenew, MdEditSquare } from 'react-icons/md';
@@ -42,6 +42,18 @@ const features = [
 const FeatureGrid = () => {
     const [activeBoardId, setActiveBoardId] = useState(features[0].id); // Start with the first feature by default
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setActiveBoardId(prevId => {
+                const currentIndex = features.findIndex(feature => feature.id === prevId);
+                const nextIndex = (currentIndex + 1) % features.length;
+                return features[nextIndex].id;
+            });
+        }, 4000); // Change slide every 5 seconds
+
+        return () => clearInterval(interval); // Clear interval on component unmount
+    }, []);
+
     const renderBoardContent = () => {
         const activeFeature = features.find(feature => feature.id === activeBoardId);
         return (
@@ -76,7 +88,7 @@ const FeatureGrid = () => {
             </div>
           </motion.div>
         );
-      };
+    };
 
   return (
     <div className="w-full h-screen flex flex-col">
