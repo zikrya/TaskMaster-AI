@@ -1,11 +1,12 @@
 'use client'
 import React from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import Cards from '../components/landing/Cards'
+import { motion } from 'framer-motion'
 import Image from 'next/image';
 import Footer from '../components/landing/Footer'
 import FeatureGrid from '../components/landing/FeatureGrid'
+
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -15,18 +16,13 @@ const fadeInUp = {
 export default function Home() {
   return (
     <>
-      <motion.div
-        className="flex flex-col items-center"
-        initial="hidden"
-        animate="visible"
-        variants={fadeInUp}
-      >
+      <div className="flex flex-col items-center">
         <motion.div
           className="w-full bg-[#D3DCE6] border border-gray-300 shadow-sm rounded-md opacity-90"
           style={{ height: '60vh' }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
         >
           <div className='flex h-full px-6'>
             <div className='w-full md:w-1/2 lg:w-1/3 self-center'>
@@ -41,16 +37,16 @@ export default function Home() {
             </div>
           </div>
         </motion.div>
-        <motion.div className='mt-4' variants={fadeInUp}>
+        <motion.div className='mt-4' initial="hidden" animate="visible" variants={fadeInUp}>
           <Cards />
         </motion.div>
-        <motion.div className='mt-10' variants={fadeInUp}>
+        <motion.div className='mt-10' initial="hidden" animate="visible" variants={fadeInUp}>
           <FeatureGrid />
         </motion.div>
-        <motion.div variants={fadeInUp}>
+        <motion.div className='w-full' initial="hidden" animate="visible" variants={fadeInUp}>
           <Footer />
         </motion.div>
-      </motion.div>
+      </div>
     </>
   )
 }
