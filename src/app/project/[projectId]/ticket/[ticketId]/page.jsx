@@ -214,15 +214,13 @@ const TicketPage = ({ params }) => {
 
                     <div className="mb-8">
                         <ReactMarkdown className="text-gray-800">{ticket.description || 'No description available'}</ReactMarkdown>
-                        {!ticket.description && (
-                            <button
-                                onClick={handleGenerateMore}
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition mt-4"
-                                disabled={isGeneratingMore}
-                            >
-                                {isGeneratingMore ? 'Generating...' : 'Generate More'}
-                            </button>
-                        )}
+                        <button
+                            onClick={handleGenerateMore}
+                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition mt-4"
+                            disabled={isGeneratingMore}
+                        >
+                            {isGeneratingMore ? 'Generating...' : 'Generate More'}
+                        </button>
                     </div>
 
                     <div className="mb-8">
