@@ -1,5 +1,7 @@
 import { prisma } from "../../../../../../../../server/db";
 
+export const maxDuration = 30; // Set the maximum duration to 30 seconds
+
 export async function POST(req, { params }) {
     const { projectId, ticketId } = params;
     let currentDescription;
