@@ -6,6 +6,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import ImageClerk from '../../components/ImageClerk';
 import ReactLoading from 'react-loading';
+import { AiOutlineFundProjectionScreen, AiOutlineUserAdd, } from "react-icons/ai";
+import { HiUserAdd } from "react-icons/hi";
+
+// Utility function to truncate text
+const truncateText = (text, maxLength) => {
+    if (text.length <= maxLength) {
+        return text;
+    }
+    return text.slice(0, maxLength) + '...';
+};
 
 const Projects = () => {
     const [isModalOpen, setModalOpen] = useState(false);
@@ -151,13 +161,14 @@ const Projects = () => {
             <div className="flex overflow-x-scroll space-x-4 p-2">
                 {ownedProjects.map((project) => (
                     <div key={project.id} className="flex-none w-64">
-                        <div className="flex items-center box-border h-32 w-full p-4 bg-white shadow-md rounded relative">
-                            <div className="absolute inset-y-0 left-0 w-4 bg-[#7a79ea] rounded-sm"></div>
-                            <Image src="/clipboard.png" lt="Icon" width={24} height={24} className="absolute left-[4px] top-[1px]" />
+                        <div className="box-border h-48 w-full p-4 bg-gray-200 shadow-md rounded relative">
                             <Link href={`/project/${project.id}`}>
-                                <div className="ml-8">
-                                    <p className="text-base font-semibold text-[#7a79ea]">{project.name}</p>
-                                    <p className="text-sm font-light text-[#4d4cd0]">{project.description}</p>
+                                <div className="flex justify-between items-start">
+                                    <p className="font-semibold text-black text-xl">{project.name}</p>
+                                    <AiOutlineFundProjectionScreen size={48} className="text-gray-500" />
+                                </div>
+                                <div className=" flex-grow">
+                                    <p className="text-md font-light text-[#4d4cd0] overflow-hidden">{truncateText(project.description, 100)}</p>
                                 </div>
                             </Link>
                         </div>
@@ -165,18 +176,22 @@ const Projects = () => {
                 ))}
             </div>
             <h2 className="text-xl font-semibold mt-8 mb-4">Shared Projects</h2>
-            <div className="flex overflow-x-scroll space-x-4 p-2">
+            <div className="flex overflow-x-scroll space-x-8 p-2 mt-5">
                 {sharedProjects.map((project) => (
-                    <div key={project.id} className="flex-none w-64">
-                        <div className="flex items-center box-border h-32 w-full p-4 bg-white shadow-md rounded relative">
-                            <div className="absolute inset-y-0 left-0 w-4 bg-[#7a79ea] rounded-sm"></div>
-                            <Image src="/clipboard.png" lt="Icon" width={24} height={24} className="absolute left-[4px] top-[1px]" />
+                    <div key={project.id} className="flex-none w-64 relative">
+                        <div className="box-border h-48 w-full p-4 bg-gray-200 shadow-md rounded relative">
                             <Link href={`/project/${project.id}`}>
-                                <div className="ml-8">
-                                    <p className="text-base font-semibold text-blue-600">{project.name}</p>
-                                    <p className="text-sm font-light text-blue-400">{project.description}</p>
+                                <div className="flex justify-between items-start">
+                                <p className="font-semibold text-black text-xl">{project.name}</p>
+                                    <AiOutlineFundProjectionScreen size={48} className="text-gray-500" />
+                                </div>
+                                <div className=" flex-grow">
+                                <p className="text-md font-light text-[#4d4cd0] overflow-hidden">{truncateText(project.description, 100)}</p>
                                 </div>
                             </Link>
+                        </div>
+                        <div className="absolute -top-2 -right-3 bg-[#4d4cd0] rounded-full p-1 shadow-lg">
+                            <HiUserAdd size={24} className="text-black" />
                         </div>
                     </div>
                 ))}
