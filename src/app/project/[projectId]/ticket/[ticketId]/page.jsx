@@ -6,6 +6,7 @@ import PusherSubscriber from '../../../../../components/PusherSubscriber';
 import ReactLoading from 'react-loading';
 import CustomDropdown from '../../../../../components/CustomDropdown';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import Image from 'next/image';
 
 const TicketPage = ({ params }) => {
     const { projectId, ticketId } = params;
@@ -203,9 +204,10 @@ const TicketPage = ({ params }) => {
     };
 
     if (isLoading && !ticket?.description) return (
-        <div className="flex justify-center items-center min-h-screen">
-            <ReactLoading type="spin" color="#7a79ea" height={64} width={64} />
-        </div>
+<div className="flex flex-col justify-center items-center min-h-screen">
+  <Image src="/loading_logo.png" alt="DevLiftoff Logo" width={500} height={500} className="" />
+  <ReactLoading type="spin" color="#7a79ea" height={64} width={64} />
+</div>
     );
     if (error) return <div>Error: {error}</div>;
     if (!ticket) return <div>Ticket not found</div>;
