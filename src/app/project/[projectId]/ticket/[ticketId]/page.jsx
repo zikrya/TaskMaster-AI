@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import PusherSubscriber from '../../../../../components/PusherSubscriber';
 import ReactLoading from 'react-loading';
 import CustomDropdown from '../../../../../components/CustomDropdown';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 const TicketPage = ({ params }) => {
     const { projectId, ticketId } = params;
@@ -17,6 +18,8 @@ const TicketPage = ({ params }) => {
     const [assigneeId, setAssigneeId] = useState('');
     const [users, setUsers] = useState([]);
     const [isGeneratingMore, setIsGeneratingMore] = useState(false);
+    const [isCommentFocused, setIsCommentFocused] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(true); // State for toggling dropdown
     const router = useRouter();
 
     useEffect(() => {
@@ -110,6 +113,7 @@ const TicketPage = ({ params }) => {
             const newCommentData = await response.json();
             setComments([...comments, newCommentData]);
             setNewComment('');
+            setIsCommentFocused(false);
         } catch (error) {
             console.error('Error creating comment:', error);
             alert('An unexpected error occurred. Please try again later.');
@@ -194,6 +198,10 @@ const TicketPage = ({ params }) => {
         }
     };
 
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
     if (isLoading && !ticket?.description) return (
         <div className="flex justify-center items-center min-h-screen">
             <ReactLoading type="spin" color="#7a79ea" height={64} width={64} />
@@ -216,61 +224,94 @@ const TicketPage = ({ params }) => {
                         <ReactMarkdown className="text-gray-800">{ticket.description || 'No description available'}</ReactMarkdown>
                         <button
                             onClick={handleGenerateMore}
-                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition mt-4"
+                            className="text-gray-400 hover:text-gray-200 transition mt-4 text-sm"
                             disabled={isGeneratingMore}
                         >
                             {isGeneratingMore ? 'Generating...' : 'Generate More'}
                         </button>
                     </div>
-
+                    <div className="border-t border-gray-300 mb-5"></div>
                     <div className="mb-8">
                         <h2 className="text-xl font-semibold mb-4">Comments</h2>
-                        <ul className="space-y-4">
+                        <form onSubmit={handleCommentSubmit} className="mt-4">
+                            {!isCommentFocused ? (
+                                <textarea
+                                    value={newComment}
+                                    onChange={handleNewCommentChange}
+                                    placeholder="Add a comment..."
+                                    required
+                                    className="w-full p-2 border rounded mb-4"
+                                    onFocus={() => setIsCommentFocused(true)}
+                                    style={{ minHeight: '40px' }}
+                                />
+                            ) : (
+                                <>
+                                    <textarea
+                                        value={newComment}
+                                        onChange={handleNewCommentChange}
+                                        placeholder="Type @ to mention and notify someone."
+                                        required
+                                        className="w-full p-2 border rounded mb-4"
+                                        style={{ minHeight: '80px' }}
+                                    />
+                                    <div className="flex justify-end">
+                                        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition mr-2">
+                                            Save
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="px-4 py-2 rounded hover:bg-gray-200 transition"
+                                            onClick={() => setIsCommentFocused(false)}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                        </form>
+                        <ul className="space-y-1 bg-gray-50 p-4">
                             {comments.map((comment) => (
-                                <li key={comment.id} className="bg-gray-100 p-4 rounded-md">
+                                <li key={comment.id} className=" p-3 rounded-md">
                                     <strong>{comment.user ? comment.user.username : 'Unknown User'}</strong>
                                     <p>{comment.content}</p>
+                                    <div className="border-t border-gray-300"></div>
                                 </li>
                             ))}
                         </ul>
-
-                        <form onSubmit={handleCommentSubmit} className="mt-4">
-                            <textarea
-                                value={newComment}
-                                onChange={handleNewCommentChange}
-                                placeholder="Add a comment"
-                                required
-                                className="w-full p-2 border rounded mb-4"
-                            />
-                            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
-                                Submit Comment
-                            </button>
-                        </form>
                     </div>
                 </div>
 
-                <div className="w-full lg:w-1/4">
-                    <div className="mb-8">
-                        <h2 className="text-lg font-semibold mb-2 ml-4">Status</h2>
-                        <div className="relative inline-block w-full">
-                            <CustomDropdown
-                                options={['To Do', 'In Progress', 'Done']}
-                                selected={status}
-                                onChange={handleStatusChange}
-                            />
-                        </div>
+                <div className="w-full lg:w-1/4 border h-full lg:h-1/4 rounded-sm">
+                    <div className='flex items-center justify-between p-1.5 cursor-pointer' onClick={toggleDropdown}>
+                        <p className='font-semibold text-lg'>Description</p>
+                        {isDropdownOpen ? <FaChevronUp /> : <FaChevronDown />}
                     </div>
+                    <div className="border-t border-gray-300 mb-2"></div>
+                    {isDropdownOpen && (
+                        <>
+                            <div className="mb-3">
+                                <h2 className="text-lg font-semibold mb-2 ml-4">Status</h2>
+                                <div className="relative inline-block w-full">
+                                    <CustomDropdown
+                                        options={['To Do', 'In Progress', 'Done']}
+                                        selected={status}
+                                        onChange={handleStatusChange}
+                                    />
+                                </div>
+                            </div>
 
-                    <div className="mb-8">
-                        <h2 className="text-lg font-semibold mb-2 ml-4">Assignee</h2>
-                        <div className="relative inline-block w-full">
-                            <CustomDropdown
-                                options={[{ label: 'Unassigned', value: '' }, ...users.map(user => ({ label: user.username || user.email, value: user.id }))]}
-                                selected={users.find(user => user.id === assigneeId)?.username || 'Unassigned'}
-                                onChange={handleAssigneeChange}
-                            />
-                        </div>
-                    </div>
+                            <div className="mb-8">
+                                <h2 className="text-lg font-semibold mb-2 ml-4">Assignee</h2>
+                                <div className="relative inline-block w-full">
+                                    <CustomDropdown
+                                        options={[{ label: 'Unassigned', value: '' }, ...users.map(user => ({ label: user.username || user.email, value: user.id }))]}
+                                        selected={users.find(user => user.id === assigneeId)?.username || 'Unassigned'}
+                                        onChange={handleAssigneeChange}
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
