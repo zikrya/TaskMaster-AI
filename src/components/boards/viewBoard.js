@@ -1,8 +1,8 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import PusherSubscriber from './PusherSubscriber';
-import CustomDropdown from './CustomDropdown';
+import PusherSubscriber from '../PusherSubscriber';
+import CustomDropdown from '../CustomDropdown';
 
 const ViewBoard = ({ project, fetchProjectAndResponses }) => {
     const router = useRouter();
