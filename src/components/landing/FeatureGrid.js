@@ -90,33 +90,33 @@ const FeatureGrid = () => {
       );
   };
 
-return (
-  <div id="feature-grid" className="w-full h-screen flex flex-col">
-    <header className="py-5 px-8 border-b bg-white w-7/12 mx-auto rounded-lg" style={{ boxShadow: '0 4px 10px #7a79ea' }}>
-      <nav className="flex justify-center">
-        <div className="flex space-x-4 max-w-screen-md mx-auto">
-          {features.map(feature => (
-            <button
-              key={feature.id}
-              onClick={() => setActiveBoardId(feature.id)}
-              className={`px-4 py-2 flex flex-col items-center rounded-t-lg ${activeBoardId === feature.id ? 'bg-white text-blue-600 border-b-2 border-blue-600' : ' text-gray-600'}`}
-            >
-              <div className="mb-1">
-                {feature.icon}
-              </div>
-              {feature.navTitle}
-            </button>
-          ))}
-        </div>
-      </nav>
-    </header>
-    <main className="flex-1">
-      <AnimatePresence mode='wait'>
-        {renderBoardContent()}
-      </AnimatePresence>
-    </main>
-  </div>
-);
+  return (
+    <div id="feature-grid" className="w-full h-screen flex flex-col">
+      <header className="py-5 px-8 border-b bg-white w-full sm:w-10/12 lg:w-7/12 mx-auto rounded-lg" style={{ boxShadow: '0 4px 10px rgba(122, 121, 234, 0.5)' }}>
+        <nav className="flex justify-center">
+          <div className="flex flex-wrap justify-center space-x-4 w-full max-w-screen-md mx-auto">
+            {features.map(feature => (
+              <button
+                key={feature.id}
+                onClick={() => setActiveBoardId(feature.id)}
+                className={`px-4 py-2 flex flex-col items-center rounded-t-lg ${activeBoardId === feature.id ? 'bg-white text-blue-600 border-b-2 border-blue-600' : ' text-gray-600'}`}
+              >
+                <div className="mb-1">
+                  {feature.icon}
+                </div>
+                {feature.navTitle}
+              </button>
+            ))}
+          </div>
+        </nav>
+      </header>
+      <main className="flex-1">
+        <AnimatePresence mode='wait'>
+          {renderBoardContent()}
+        </AnimatePresence>
+      </main>
+    </div>
+  );
 };
 
 export default FeatureGrid;
