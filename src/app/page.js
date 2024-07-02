@@ -2,10 +2,10 @@
 import React from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import Cards from '../components/Cards'
+import Cards from '../components/landing/Cards'
 import Image from 'next/image';
-import Footer from '../components/Footer'
-import FeatureGrid from '../components/FeatureGrid'
+import Footer from '../components/landing/Footer'
+import FeatureGrid from '../components/landing/FeatureGrid'
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
