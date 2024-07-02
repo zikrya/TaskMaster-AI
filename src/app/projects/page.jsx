@@ -3,11 +3,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from '../../components/modal';
 import Link from 'next/link';
-import Image from 'next/image';
-import ImageClerk from '../../components/ImageClerk';
-import ReactLoading from 'react-loading';
-import { AiOutlineFundProjectionScreen, AiOutlineUserAdd, } from "react-icons/ai";
+import { AiOutlineFundProjectionScreen, AiOutlineUserAdd } from "react-icons/ai";
 import { HiUserAdd } from "react-icons/hi";
+import ReactLoading from 'react-loading';
 
 // Utility function to truncate text
 const truncateText = (text, maxLength) => {
@@ -17,6 +15,16 @@ const truncateText = (text, maxLength) => {
     return text.slice(0, maxLength) + '...';
 };
 
+const SkeletonCard = () => (
+    <div className="flex-none w-64 animate-pulse">
+        <div className="box-border h-48 w-full p-4 bg-gray-200 shadow-md rounded relative">
+            <div className="h-6 bg-gray-300 mb-4 w-3/4"></div>
+            <div className="h-4 bg-gray-300 mb-2 w-5/6"></div>
+            <div className="h-4 bg-gray-300 mb-2 w-4/5"></div>
+        </div>
+    </div>
+);
+
 const Projects = () => {
     const [isModalOpen, setModalOpen] = useState(false);
     const [projectName, setProjectName] = useState('');
@@ -24,9 +32,9 @@ const Projects = () => {
     const [prompt, setPrompt] = useState('');
     const [ownedProjects, setOwnedProjects] = useState([]);
     const [sharedProjects, setSharedProjects] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false); // New state for loading bar
     const [error, setError] = useState(null);
+    const [isFetching, setIsFetching] = useState(true);
     const router = useRouter();
 
     const openModal = () => setModalOpen(true);
@@ -88,8 +96,8 @@ const Projects = () => {
 
     useEffect(() => {
         const fetchProjects = async () => {
-            setIsLoading(true);
             setError(null);
+            setIsFetching(true);
 
             try {
                 const response = await fetch('/api/projects/user');
@@ -102,15 +110,12 @@ const Projects = () => {
                 console.error('Error fetching projects:', error);
                 setError(error.message);
             } finally {
-                setIsLoading(false);
+                setIsFetching(false);
             }
         };
 
         fetchProjects();
     }, []);
-
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
 
     return (
         <div className="p-6">
@@ -159,42 +164,54 @@ const Projects = () => {
 
             <h2 className="text-xl font-semibold mt-8 mb-4">My Projects</h2>
             <div className="flex overflow-x-scroll space-x-4 p-2">
-                {ownedProjects.map((project) => (
-                    <div key={project.id} className="flex-none w-64">
-                        <div className="box-border h-48 w-full p-4 bg-gray-200 shadow-md rounded relative">
-                            <Link href={`/project/${project.id}`}>
-                                <div className="flex justify-between items-start">
-                                    <p className="font-semibold text-black text-xl">{project.name}</p>
-                                    <AiOutlineFundProjectionScreen size={48} className="text-gray-500" />
-                                </div>
-                                <div className=" flex-grow">
-                                    <p className="text-md font-light text-[#4d4cd0] overflow-hidden">{truncateText(project.description, 100)}</p>
-                                </div>
-                            </Link>
+                {isFetching && !error ? (
+                    Array.from({ length: 3 }).map((_, idx) => <SkeletonCard key={idx} />)
+                ) : ownedProjects.length === 0 ? (
+                    <div className="text-center w-full">You don't have any projects yet.</div>
+                ) : (
+                    ownedProjects.map((project) => (
+                        <div key={project.id} className="flex-none w-64">
+                            <div className="box-border h-48 w-full p-4 bg-gray-200 shadow-md rounded relative">
+                                <Link href={`/project/${project.id}`}>
+                                    <div className="flex justify-between items-start">
+                                        <p className="font-semibold text-black text-xl">{project.name}</p>
+                                        <AiOutlineFundProjectionScreen size={48} className="text-gray-500" />
+                                    </div>
+                                    <div className=" flex-grow">
+                                        <p className="text-md font-light text-[#4d4cd0] overflow-hidden">{truncateText(project.description, 100)}</p>
+                                    </div>
+                                </Link>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
             <h2 className="text-xl font-semibold mt-8 mb-4">Shared Projects</h2>
             <div className="flex overflow-x-scroll space-x-8 p-2 mt-5">
-                {sharedProjects.map((project) => (
-                    <div key={project.id} className="flex-none w-64 relative">
-                        <div className="box-border h-48 w-full p-4 bg-gray-200 shadow-md rounded relative">
-                            <Link href={`/project/${project.id}`}>
-                                <div className="flex justify-between items-start">
-                                <p className="font-semibold text-black text-xl">{project.name}</p>
-                                    <AiOutlineFundProjectionScreen size={48} className="text-gray-500" />
-                                </div>
-                                <div className=" flex-grow">
-                                <p className="text-md font-light text-[#4d4cd0] overflow-hidden">{truncateText(project.description, 100)}</p>
-                                </div>
-                            </Link>
+                {isFetching && !error ? (
+                    Array.from({ length: 3 }).map((_, idx) => <SkeletonCard key={idx} />)
+                ) : sharedProjects.length === 0 ? (
+                    <div className="text-center w-full text-xl text-[#4d4cd0]">You don't have any shared projects yet.</div>
+                ) : (
+                    sharedProjects.map((project) => (
+                        <div key={project.id} className="flex-none w-64 relative">
+                            <div className="box-border h-48 w-full p-4 bg-gray-200 shadow-md rounded relative">
+                                <Link href={`/project/${project.id}`}>
+                                    <div className="flex justify-between items-start">
+                                        <p className="font-semibold text-black text-xl">{project.name}</p>
+                                        <AiOutlineFundProjectionScreen size={48} className="text-gray-500" />
+                                    </div>
+                                    <div className=" flex-grow">
+                                        <p className="text-md font-light text-[#4d4cd0] overflow-hidden">{truncateText(project.description, 100)}</p>
+                                    </div>
+                                </Link>
+                            </div>
+                            <div className="absolute -top-2 -right-3 bg-[#4d4cd0] rounded-full p-1 shadow-lg">
+                                <HiUserAdd size={24} className="text-black" />
+                            </div>
                         </div>
-                        <div className="absolute -top-2 -right-3 bg-[#4d4cd0] rounded-full p-1 shadow-lg">
-                            <HiUserAdd size={24} className="text-black" />
-                        </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
         </div>
     );

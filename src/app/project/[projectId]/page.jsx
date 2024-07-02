@@ -13,17 +13,12 @@ const ProjectPage = ({ params }) => {
     const { projectId } = params;
     const [project, setProject] = useState(null);
     const [sharedUsers, setSharedUsers] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [columns, setColumns] = useState([]);
     const [view, setView] = useState('kanban');
     const [searchQuery, setSearchQuery] = useState('');
     const router = useRouter();
 
     const fetchProjectAndResponses = useCallback(async () => {
-        setIsLoading(true);
-        setError(null);
-
         try {
             const response = await fetch(`/api/projects/${projectId}`);
             if (response.status === 403) {
@@ -33,7 +28,6 @@ const ProjectPage = ({ params }) => {
             if (!response.ok) throw new Error('Failed to fetch project');
 
             const data = await response.json();
-            console.log('Fetched project data:', data);
             setProject(data.project);
             setSharedUsers(data.allUsers);
 
@@ -83,14 +77,13 @@ const ProjectPage = ({ params }) => {
             ];
 
             setColumns([
-                { name: 'To Do', tasks: toDoTasks},
+                { name: 'To Do', tasks: toDoTasks },
                 { name: 'In Progress', tasks: inProgressTasks },
                 { name: 'Done', tasks: doneTasks },
             ]);
         } catch (error) {
-            setError(error.message);
-        } finally {
-            setIsLoading(false);
+            console.error('Error fetching project data:', error);
+            router.push('/error'); // Redirect to an error page if needed
         }
     }, [projectId, router]);
 
@@ -107,9 +100,7 @@ const ProjectPage = ({ params }) => {
         tasks: filterTasks(column.tasks)
     }));
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
-    if (!project) return <div>Project not found</div>;
+    if (!project) return null; // Render nothing while the project is being fetched
 
     return (
         <FetchProjectProvider value={fetchProjectAndResponses}>
