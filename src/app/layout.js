@@ -15,6 +15,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         {/* Include meta tags, title, and other head elements here */}
+        <link rel="icon" href="/dev_icon.png" />
       </head>
       <body className={inter.className}>
         <ClerkProvider>
