@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import PusherSubscriber from '../../../../../components/PusherSubscriber';
 import ReactLoading from 'react-loading';
+import CustomDropdown from '../../../../../components/CustomDropdown';
 
 const TicketPage = ({ params }) => {
     const { projectId, ticketId } = params;
@@ -115,8 +116,7 @@ const TicketPage = ({ params }) => {
         }
     };
 
-    const handleStatusChange = async (e) => {
-        const newStatus = e.target.value;
+    const handleStatusChange = async (newStatus) => {
         try {
             const response = await fetch(`/api/projects/${projectId}/ticket/${ticketId}/status`, {
                 method: 'PUT',
@@ -138,13 +138,12 @@ const TicketPage = ({ params }) => {
         }
     };
 
-    const handleAssigneeChange = async (e) => {
-        const newAssigneeId = e.target.value;
+    const handleAssigneeChange = async (newAssignee) => {
         try {
             const response = await fetch(`/api/projects/${projectId}/ticket/${ticketId}/assign`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ assigneeId: newAssigneeId }),
+                body: JSON.stringify({ assigneeId: newAssignee.value }),
             });
 
             if (!response.ok) {
@@ -154,7 +153,7 @@ const TicketPage = ({ params }) => {
                 return;
             }
 
-            setAssigneeId(newAssigneeId);
+            setAssigneeId(newAssignee.value);
         } catch (error) {
             console.error('Error updating assignee:', error);
             alert('An unexpected error occurred. Please try again later.');
@@ -254,35 +253,25 @@ const TicketPage = ({ params }) => {
 
                 <div className="w-full lg:w-1/4">
                     <div className="mb-8">
-                        <h2 className="text-lg font-semibold mb-4">Status</h2>
-                        <select
-                            value={status}
-                            onChange={handleStatusChange}
-                            className="w-full p-2 border rounded"
-                        >
-                            <option value="To Do">To Do</option>
-                            <option value="In Progress">In Progress</option>
-                            <option value="Done">Done</option>
-                        </select>
+                        <h2 className="text-lg font-semibold mb-2 ml-4">Status</h2>
+                        <div className="relative inline-block w-full">
+                            <CustomDropdown
+                                options={['To Do', 'In Progress', 'Done']}
+                                selected={status}
+                                onChange={handleStatusChange}
+                            />
+                        </div>
                     </div>
 
                     <div className="mb-8">
-                        <h2 className="text-lg font-semibold mb-4">Assignee</h2>
-                        <select
-                            value={assigneeId}
-                            onChange={handleAssigneeChange}
-                            className="w-full p-2 border rounded"
-                        >
-                            <option value="">Unassigned</option>
-                            {users.map(user => (
-                                <option key={user.id} value={user.id}>{user.username || user.email}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="mb-8">
-                        <h2 className="text-lg font-semibold mb-4">Projects</h2>
-                        <p>TaskMaster-AI</p>
+                        <h2 className="text-lg font-semibold mb-2 ml-4">Assignee</h2>
+                        <div className="relative inline-block w-full">
+                            <CustomDropdown
+                                options={[{ label: 'Unassigned', value: '' }, ...users.map(user => ({ label: user.username || user.email, value: user.id }))]}
+                                selected={users.find(user => user.id === assigneeId)?.username || 'Unassigned'}
+                                onChange={handleAssigneeChange}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import PusherSubscriber from '../../../../../../components/PusherSubscriber';
 import ReactLoading from 'react-loading';
+import CustomDropdown from '../../../../../../components/CustomDropdown';
+
 
 const CustomTicketPage = ({ params }) => {
     const { projectId, ticketId } = params;
@@ -89,8 +91,7 @@ const CustomTicketPage = ({ params }) => {
         }
     };
 
-    const handleStatusChange = async (e) => {
-        const newStatus = e.target.value;
+    const handleStatusChange = async (newStatus) => {
         try {
             const response = await fetch(`/api/projects/${projectId}/ticket/custom-ticket/${ticketId}/status`, {
                 method: 'PUT',
@@ -112,13 +113,12 @@ const CustomTicketPage = ({ params }) => {
         }
     };
 
-    const handleAssigneeChange = async (e) => {
-        const newAssigneeId = e.target.value;
+    const handleAssigneeChange = async (newAssignee) => {
         try {
             const response = await fetch(`/api/projects/${projectId}/ticket/custom-ticket/${ticketId}/assign`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ assigneeId: newAssigneeId }),
+                body: JSON.stringify({ assigneeId: newAssignee.value }),
             });
 
             if (!response.ok) {
@@ -128,7 +128,7 @@ const CustomTicketPage = ({ params }) => {
                 return;
             }
 
-            setAssigneeId(newAssigneeId);
+            setAssigneeId(newAssignee.value);
         } catch (error) {
             console.error('Error updating assignee:', error);
             alert('An unexpected error occurred. Please try again later.');
@@ -153,9 +153,9 @@ const CustomTicketPage = ({ params }) => {
         <div className="p-8 bg-gray-100 min-h-screen">
             <PusherSubscriber projectId={projectId} ticketId={ticketId} onTicketUpdate={handleTicketUpdate} onStatusUpdate={handleStatusUpdate} />
             {isLoading ? (
-        <div className="flex justify-center items-center min-h-screen">
-        <ReactLoading type="spin" color="#7a79ea" height={64} width={64} />
-    </div>
+                <div className="flex justify-center items-center min-h-screen">
+                    <ReactLoading type="spin" color="#7a79ea" height={64} width={64} />
+                </div>
             ) : (
                 <div className="max-w-6xl mx-auto bg-white p-10 rounded-md shadow-md flex flex-col lg:flex-row min-h-screen">
                     <div className="flex-1 pr-0 lg:pr-8 mb-8 lg:mb-0">
@@ -196,35 +196,21 @@ const CustomTicketPage = ({ params }) => {
 
                     <div className="w-full lg:w-1/4">
                         <div className="mb-8">
-                            <h2 className="text-lg font-semibold mb-4">Status</h2>
-                            <select
-                                value={status}
+                            <h2 className="text-lg font-semibold mb-2 ml-4">Status</h2>
+                            <CustomDropdown
+                                options={['To Do', 'In Progress', 'Done']}
+                                selected={status}
                                 onChange={handleStatusChange}
-                                className="w-full p-2 border rounded"
-                            >
-                                <option value="To Do">To Do</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Done">Done</option>
-                            </select>
+                            />
                         </div>
 
                         <div className="mb-8">
-                            <h2 className="text-lg font-semibold mb-4">Assignee</h2>
-                            <select
-                                value={assigneeId}
+                            <h2 className="text-lg font-semibold mb-2 ml-4">Assignee</h2>
+                            <CustomDropdown
+                                options={[{ label: 'Unassigned', value: '' }, ...users.map(user => ({ label: user.username || user.email, value: user.id }))]}
+                                selected={users.find(user => user.id === assigneeId)?.username || 'Unassigned'}
                                 onChange={handleAssigneeChange}
-                                className="w-full p-2 border rounded"
-                            >
-                                <option value="">Unassigned</option>
-                                {users.map(user => (
-                                    <option key={user.id} value={user.id}>{user.username || user.email}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="mb-8">
-                            <h2 className="text-lg font-semibold mb-4">Projects</h2>
-                            <p>TaskMaster-AI</p>
+                            />
                         </div>
                     </div>
                 </div>
