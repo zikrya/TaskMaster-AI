@@ -80,7 +80,7 @@ const NavBar = () => {
             {user ? (
               <SignOutButton className="text-white hover:text-yellow-300 transition duration-300 ease-in-out hover:underline">Sign out</SignOutButton>
             ) : (
-              <Link href="/sign-in" className=" text-white bg-gradient-to-r from-purple-200 via-purple-300 to-purple-400 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+              <Link href="/sign-in" className="border-white/6 px-4 py-2 backdrop-blur sm:rounded-lg sm:border bg-white/5 text-white text-xs transition-all duration-200 hover:bg-white/10 hover:scale-105">
                 Log in
               </Link>
             )}
