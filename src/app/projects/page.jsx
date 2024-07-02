@@ -167,7 +167,7 @@ const Projects = () => {
                 {isFetching && !error ? (
                     Array.from({ length: 3 }).map((_, idx) => <SkeletonCard key={idx} />)
                 ) : ownedProjects.length === 0 ? (
-                    <div className="text-center w-full">You don't have any projects yet.</div>
+                    <div className="text-center w-full"></div>
                 ) : (
                     ownedProjects.map((project) => (
                         <div key={project.id} className="flex-none w-64">
