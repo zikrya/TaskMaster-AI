@@ -19,7 +19,7 @@ const Cards = () => {
       </motion.div>
       <motion.div className="bg-[#6c6bf8] p-8 rounded-md shadow-lg w-full sm:w-1/2 lg:w-1/4 xl:w-1/5 h-96 m-4 opacity-50 overflow-hidden" variants={fadeInUp}>
         <h1 className="text-2xl font-semibold mb-4 text-white">Custom Ticket Creation</h1>
-        <p className="text-lg leading-relaxed text-white overflow-hidden text-ellipsis">Create personalized tickets tailored to your project's specific needs, allowing you to streamline workflows and enhance project management efficiency.</p>
+        <p className="text-lg leading-relaxed text-white overflow-hidden text-ellipsis">Create personalized tickets tailored to your project&apos;s specific needs, allowing you to streamline workflows and enhance project management efficiency.</p>
       </motion.div>
       <motion.div className="bg-[#a5a4ff] p-8 rounded-md shadow-lg w-full sm:w-1/2 lg:w-1/4 xl:w-1/5 h-96 m-4 opacity-50 overflow-hidden flex items-center justify-center" variants={fadeInUp}>
   <h1 className="text-2xl font-semibold text-center text-white">More features coming soon!</h1>
