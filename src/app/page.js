@@ -40,7 +40,7 @@ export default function Home() {
         <motion.div className='mt-4' initial="hidden" animate="visible" variants={fadeInUp}>
           <Cards />
         </motion.div>
-        <motion.div className='mt-10' initial="hidden" animate="visible" variants={fadeInUp}>
+        <motion.div className='mt-12' initial="hidden" animate="visible" variants={fadeInUp}>
           <FeatureGrid />
         </motion.div>
         <motion.div className='w-full' initial="hidden" animate="visible" variants={fadeInUp}>
