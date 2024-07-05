@@ -14,6 +14,10 @@ const fadeInUp = {
 };
 
 export default function Home() {
+
+  const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  console.log('NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:', clerkPublishableKey);
+console.log('CLERK_SECRET_KEY:', process.env.CLERK_SECRET_KEY);
   return (
     <>
       <div className="flex flex-col items-center">
