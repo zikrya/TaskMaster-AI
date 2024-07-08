@@ -45,13 +45,13 @@ export default function Home() {
             </div>
           </div>
         </motion.div>
-        <motion.div className='mt-4' initial="hidden" animate="visible" variants={fadeInUp}>
+        <motion.div className='mt-4 p-10' initial="hidden" animate="visible" variants={fadeInUp}>
           <Cards />
         </motion.div>
-        <motion.div className='mt-12' initial="hidden" animate="visible" variants={fadeInUp}>
+        <motion.div className='mt-10 pb-16 pt-8' initial="hidden" animate="visible" variants={fadeInUp}>
           <FeatureGrid />
         </motion.div>
-        <motion.div className='w-full' initial="hidden" animate="visible" variants={fadeInUp}>
+        <motion.div className='w-full mt-10' initial="hidden" animate="visible" variants={fadeInUp}>
           <Footer />
         </motion.div>
       </div>
