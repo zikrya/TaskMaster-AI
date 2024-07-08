@@ -1,12 +1,12 @@
-'use client'
-import React from 'react'
-import Link from 'next/link'
-import Cards from '../components/landing/Cards'
-import { motion } from 'framer-motion'
+'use client';
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import Cards from '../components/landing/Cards';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Footer from '../components/landing/Footer'
-import FeatureGrid from '../components/landing/FeatureGrid'
-
+import Footer from '../components/landing/Footer';
+import FeatureGrid from '../components/landing/FeatureGrid';
+import { useSticky } from '../context/StickContext';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -14,10 +14,14 @@ const fadeInUp = {
 };
 
 export default function Home() {
-
   const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-  console.log('NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:', clerkPublishableKey);
-console.log('CLERK_SECRET_KEY:', process.env.CLERK_SECRET_KEY);
+  const { setIsSticky } = useSticky();
+
+  useEffect(() => {
+    setIsSticky(true);
+    return () => setIsSticky(false);
+  }, [setIsSticky]);
+
   return (
     <>
       <div className="flex flex-col items-center">
@@ -41,16 +45,16 @@ console.log('CLERK_SECRET_KEY:', process.env.CLERK_SECRET_KEY);
             </div>
           </div>
         </motion.div>
-        <motion.div className='mt-4' initial="hidden" animate="visible" variants={fadeInUp}>
+        <motion.div className='mt-4 p-10' initial="hidden" animate="visible" variants={fadeInUp}>
           <Cards />
         </motion.div>
-        <motion.div className='mt-12' initial="hidden" animate="visible" variants={fadeInUp}>
+        <motion.div className='mt-10 pb-16 pt-8' initial="hidden" animate="visible" variants={fadeInUp}>
           <FeatureGrid />
         </motion.div>
-        <motion.div className='w-full' initial="hidden" animate="visible" variants={fadeInUp}>
+        <motion.div className='w-full mt-10' initial="hidden" animate="visible" variants={fadeInUp}>
           <Footer />
         </motion.div>
       </div>
     </>
-  )
+  );
 }

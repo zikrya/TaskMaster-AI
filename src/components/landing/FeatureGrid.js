@@ -91,7 +91,7 @@ const FeatureGrid = () => {
   };
 
   return (
-    <div id="feature-grid" className="w-full h-screen flex flex-col">
+    <div id="feature-grid" className="w-full h-screen flex flex-col pb-10 md:pb-16">
       <header className="py-5 px-8 border-b bg-white w-full sm:w-10/12 lg:w-7/12 mx-auto rounded-lg" style={{ boxShadow: '0 4px 10px rgba(122, 121, 234, 0.5)' }}>
         <nav className="flex justify-center">
           <div className="flex flex-wrap justify-center space-x-4 w-full max-w-screen-md mx-auto">
@@ -110,7 +110,7 @@ const FeatureGrid = () => {
           </div>
         </nav>
       </header>
-      <main className="flex-1">
+      <main className="flex-1 pb-5">
         <AnimatePresence mode='wait'>
           {renderBoardContent()}
         </AnimatePresence>
