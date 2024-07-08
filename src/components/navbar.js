@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { SignOutButton, useUser } from '@clerk/nextjs';
 import NotificationBell from './NotificationBell';
 import { motion } from 'framer-motion';
+import { useSticky } from '../context/StickContext';
 
 const navigation = [
   { name: 'Features', href: '#feature-grid' },
@@ -17,6 +18,7 @@ const NavBar = () => {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [scrollTimeout, setScrollTimeout] = useState(null);
+  const { isSticky } = useSticky();  // Add this line
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,7 +35,7 @@ const NavBar = () => {
           setShowNavbar(true);
         }
         setLastScrollY(currentScrollY);
-      }, 50)); // Adjust the delay time here
+      }, 50));
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -51,7 +53,7 @@ const NavBar = () => {
       initial={{ opacity: 1, y: 0 }}
       animate={{ opacity: showNavbar ? 1 : 0, y: showNavbar ? 0 : -100 }}
       transition={{ duration: 0.3 }}
-      className="relative z-40"
+      className={`relative z-40 ${isSticky ? 'sticky top-0' : ''}`}  // Update this line
     >
       <nav className="w-full mx-auto p-4 shadow-sm bg-[#7A79EA] backdrop-blur-lg">
         <div className="flex justify-between items-center px-4">

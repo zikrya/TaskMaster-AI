@@ -1,7 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import NavBar from '../components/navbar'
+import NavBar from '../components/navbar';
+import { StickyProvider } from '../context/StickContext';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,13 +15,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* Include meta tags, title, and other head elements here */}
         <link rel="icon" href="/dev_icon.png" />
       </head>
       <body className={inter.className}>
         <ClerkProvider>
-          <NavBar />
-          {children}
+          <StickyProvider>  {/* Add this line */}
+            <NavBar />
+            {children}
+          </StickyProvider>  {/* Add this line */}
         </ClerkProvider>
       </body>
     </html>
