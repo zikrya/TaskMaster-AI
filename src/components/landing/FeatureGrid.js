@@ -110,7 +110,7 @@ const FeatureGrid = () => {
           </div>
         </nav>
       </header>
-      <main className="flex-1 pb-5">
+      <main className="flex-1 pb-5 mt-2">
         <AnimatePresence mode='wait'>
           {renderBoardContent()}
         </AnimatePresence>
