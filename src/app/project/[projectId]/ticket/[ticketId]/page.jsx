@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import PusherSubscriber from '../../../../../components/PusherSubscriber';
 import ReactLoading from 'react-loading';
 import CustomDropdown from '../../../../../components/CustomDropdown';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaEdit, FaSave, FaTimes} from 'react-icons/fa';
 import Image from 'next/image';
 
 const TicketPage = ({ params }) => {
@@ -21,6 +21,10 @@ const TicketPage = ({ params }) => {
     const [isGeneratingMore, setIsGeneratingMore] = useState(false);
     const [isCommentFocused, setIsCommentFocused] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(true);
+    const [isEditingTitle, setIsEditingTitle] = useState(false);
+    const [editedTitle, setEditedTitle] = useState('');
+    const [isEditingDescription, setIsEditingDescription] = useState(false);
+    const [editedDescription, setEditedDescription] = useState('');
     const router = useRouter();
 
     useEffect(() => {
@@ -37,6 +41,8 @@ const TicketPage = ({ params }) => {
                 setTicket(data);
                 setStatus(data.status || '');
                 setAssigneeId(data.assigneeId || '');
+                setEditedTitle(data.response || '');
+                setEditedDescription(data.description || '');
 
                 // Fetch comments for this ticket
                 const commentsResponse = await fetch(`/api/projects/${projectId}/ticket/${ticketId}/comments`);
@@ -78,6 +84,7 @@ const TicketPage = ({ params }) => {
                     const descriptionData = await descriptionResponse.json();
                     console.log("Generated description data:", descriptionData);
                     setTicket(prev => ({ ...prev, description: descriptionData.description }));
+                    setEditedDescription(descriptionData.description);
                 }
             } catch (error) {
                 console.error('Error fetching ticket or comments:', error);
@@ -179,6 +186,7 @@ const TicketPage = ({ params }) => {
             const data = await response.json();
             console.log("Generated more description data:", data);
             setTicket(prev => ({ ...prev, description: prev.description + " " + data.description }));
+            setEditedDescription(prev => prev + " " + data.description);
         } catch (error) {
             console.error('Error generating more description:', error);
             alert('An unexpected error occurred. Please try again later.');
@@ -191,6 +199,8 @@ const TicketPage = ({ params }) => {
         setTicket(updatedTicket);
         setAssigneeId(updatedTicket.assigneeId || '');
         setStatus(updatedTicket.status || '');
+        setEditedTitle(updatedTicket.response || '');
+        setEditedDescription(updatedTicket.description || '');
     };
 
     const handleStatusUpdate = (data) => {
@@ -199,29 +209,62 @@ const TicketPage = ({ params }) => {
         }
     };
 
-    const handleDelete = async () => {
-        const url = `/api/projects/${projectId}/ticket/${ticketId}/delete`;
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    const toggleEditTitle = () => {
+        setIsEditingTitle(!isEditingTitle);
+    };
+
+    const toggleEditDescription = () => {
+        setIsEditingDescription(!isEditingDescription);
+    };
+
+    const handleSaveTitle = async () => {
         try {
-            const response = await fetch(url, {
-                method: 'DELETE',
+            const response = await fetch(`/api/projects/${projectId}/ticket/${ticketId}`, {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ response: editedTitle }),
             });
 
             if (!response.ok) {
                 const { message } = await response.json();
-                alert(`Failed to delete ticket: ${message}`);
+                console.error(`Failed to update title: ${message}`);
+                alert(`Failed to update title: ${message}`);
                 return;
             }
 
-            router.push(`/project/${projectId}`);
+            setTicket(prev => ({ ...prev, response: editedTitle }));
+            setIsEditingTitle(false);
         } catch (error) {
-            console.error('Error deleting ticket:', error);
+            console.error('Error updating title:', error);
             alert('An unexpected error occurred. Please try again later.');
         }
     };
 
-    const toggleDropdown = () => {
-        setIsDropdownOpen(!isDropdownOpen);
+    const handleSaveDescription = async () => {
+        try {
+            const response = await fetch(`/api/projects/${projectId}/ticket/${ticketId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description: editedDescription }),
+            });
+
+            if (!response.ok) {
+                const { message } = await response.json();
+                console.error(`Failed to update description: ${message}`);
+                alert(`Failed to update description: ${message}`);
+                return;
+            }
+
+            setTicket(prev => ({ ...prev, description: editedDescription }));
+            setIsEditingDescription(false);
+        } catch (error) {
+            console.error('Error updating description:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        }
     };
 
     if (isLoading && !ticket?.description) return (
@@ -239,12 +282,44 @@ const TicketPage = ({ params }) => {
             <div className="max-w-6xl mx-auto bg-white p-10 rounded-md shadow-md flex flex-col lg:flex-row min-h-screen">
                 <div className="flex-1 pr-0 lg:pr-8 mb-8 lg:mb-0">
                     <div className="mb-8">
-                        <h1 className="text-2xl font-bold">{ticket.response}</h1>
+                        {isEditingTitle ? (
+                            <div className="flex items-center">
+                                <input
+                                    type="text"
+                                    value={editedTitle}
+                                    onChange={(e) => setEditedTitle(e.target.value)}
+                                    className="p-2 border rounded w-full"
+                                />
+                                <button onClick={handleSaveTitle} className="ml-2 text-green-500"><FaSave /></button>
+                                <button onClick={toggleEditTitle} className="ml-2 text-red-500"><FaTimes /></button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center">
+                                <h1 className="text-2xl font-bold">{ticket.response}</h1>
+                                <button onClick={toggleEditTitle} className="ml-2 text-blue-500"><FaEdit /></button>
+                            </div>
+                        )}
                         <p className="text-gray-600">Ticket #{ticketId}</p>
                     </div>
 
                     <div className="mb-8">
-                        <ReactMarkdown className="text-gray-800">{ticket.description || 'No description available'}</ReactMarkdown>
+                        {isEditingDescription ? (
+                            <div className="flex items-center">
+                                <textarea
+                                    value={editedDescription}
+                                    onChange={(e) => setEditedDescription(e.target.value)}
+                                    className="p-2 border rounded w-full"
+                                    rows="4"
+                                />
+                                <button onClick={handleSaveDescription} className="ml-2 text-green-500"><FaSave /></button>
+                                <button onClick={toggleEditDescription} className="ml-2 text-red-500"><FaTimes /></button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center">
+                                <ReactMarkdown className="text-gray-800">{ticket.description || 'No description available'}</ReactMarkdown>
+                                <button onClick={toggleEditDescription} className="ml-2 text-blue-500"><FaEdit /></button>
+                            </div>
+                        )}
                         <button
                             onClick={handleGenerateMore}
                             className="text-gray-400 hover:text-gray-200 transition mt-4 text-sm"
@@ -332,15 +407,6 @@ const TicketPage = ({ params }) => {
                                         onChange={handleAssigneeChange}
                                     />
                                 </div>
-                            </div>
-
-                            <div className="mb-8 ml-5 text-sm text-gray-600 hover:text-red-500">
-                                <button
-                                    onClick={handleDelete}
-                                    className=""
-                                >
-                                    Delete Ticket
-                                </button>
                             </div>
                         </>
                     )}
