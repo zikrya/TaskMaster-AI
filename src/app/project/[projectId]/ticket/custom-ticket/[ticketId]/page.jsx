@@ -139,6 +139,27 @@ const CustomTicketPage = ({ params }) => {
         }
     };
 
+    const handleDelete = async () => {
+        const url = `/api/projects/${projectId}/ticket/custom-ticket/${ticketId}/delete`;
+        try {
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (!response.ok) {
+                const { message } = await response.json();
+                alert(`Failed to delete ticket: ${message}`);
+                return;
+            }
+
+            router.push(`/project/${projectId}`);
+        } catch (error) {
+            console.error('Error deleting ticket:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        }
+    };
+
     const handleTicketUpdate = (updatedTicket) => {
         setTicket(updatedTicket);
         setAssigneeId(updatedTicket.assigneeId || '');
@@ -156,10 +177,10 @@ const CustomTicketPage = ({ params }) => {
     };
 
     if (isLoading && !ticket?.description) return (
-<div className="flex flex-col justify-center items-center min-h-screen">
-  <Image src="/loading_logo.png" alt="DevLiftoff Logo" width={500} height={500} className="" />
-  <ReactLoading type="spin" color="#7a79ea" height={64} width={64} />
-</div>
+        <div className="flex flex-col justify-center items-center min-h-screen">
+            <Image src="/loading_logo.png" alt="DevLiftoff Logo" width={500} height={500} className="" />
+            <ReactLoading type="spin" color="#7a79ea" height={64} width={64} />
+        </div>
     );
     if (error) return <div>Error: {error}</div>;
     if (!ticket) return <div>Ticket not found</div>;
@@ -256,6 +277,15 @@ const CustomTicketPage = ({ params }) => {
                                         onChange={handleAssigneeChange}
                                     />
                                 </div>
+                            </div>
+
+                            <div className="mb-8">
+                                <button
+                                    onClick={handleDelete}
+                                    className="mb-8 ml-5 text-sm text-gray-600 hover:text-red-500"
+                                >
+                                    Delete Ticket
+                                </button>
                             </div>
                         </>
                     )}

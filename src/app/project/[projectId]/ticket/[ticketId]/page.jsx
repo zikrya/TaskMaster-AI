@@ -199,6 +199,27 @@ const TicketPage = ({ params }) => {
         }
     };
 
+    const handleDelete = async () => {
+        const url = `/api/projects/${projectId}/ticket/${ticketId}/delete`;
+        try {
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (!response.ok) {
+                const { message } = await response.json();
+                alert(`Failed to delete ticket: ${message}`);
+                return;
+            }
+
+            router.push(`/project/${projectId}`);
+        } catch (error) {
+            console.error('Error deleting ticket:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        }
+    };
+
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
@@ -311,6 +332,15 @@ const TicketPage = ({ params }) => {
                                         onChange={handleAssigneeChange}
                                     />
                                 </div>
+                            </div>
+
+                            <div className="mb-8 ml-5 text-sm text-gray-600 hover:text-red-500">
+                                <button
+                                    onClick={handleDelete}
+                                    className=""
+                                >
+                                    Delete Ticket
+                                </button>
                             </div>
                         </>
                     )}
