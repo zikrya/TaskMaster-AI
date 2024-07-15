@@ -20,6 +20,9 @@ const CustomTicketPage = ({ params }) => {
     const [users, setUsers] = useState([]);
     const [isCommentFocused, setIsCommentFocused] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(true); // State for toggling dropdown
+    const [isEditing, setIsEditing] = useState(false); // State for editing mode
+    const [editTitle, setEditTitle] = useState(''); // State for editing title
+    const [editDescription, setEditDescription] = useState(''); // State for editing description
     const router = useRouter();
 
     useEffect(() => {
@@ -46,6 +49,9 @@ const CustomTicketPage = ({ params }) => {
                 setUsers(uniqueUsers);
                 setStatus(ticketData.status || '');
                 setAssigneeId(ticketData.assigneeId || '');
+
+                setEditTitle(ticketData.title);
+                setEditDescription(ticketData.description);
 
                 // Fetch comments separately to display ticket details sooner
                 const commentsResponse = await fetch(`/api/projects/${projectId}/ticket/custom-ticket/${ticketId}/comments`);
@@ -155,11 +161,46 @@ const CustomTicketPage = ({ params }) => {
         setIsDropdownOpen(!isDropdownOpen);
     };
 
+    const toggleEdit = () => {
+        setIsEditing(!isEditing);
+    };
+
+    const handleTitleChange = (e) => {
+        setEditTitle(e.target.value);
+    };
+
+    const handleDescriptionChange = (e) => {
+        setEditDescription(e.target.value);
+    };
+
+    const handleSave = async () => {
+        try {
+            const response = await fetch(`/api/projects/${projectId}/ticket/custom-ticket/${ticketId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: editTitle, description: editDescription }),
+            });
+
+            if (!response.ok) {
+                const { message } = await response.json();
+                alert(`Failed to update ticket: ${message}`);
+                return;
+            }
+
+            const updatedTicket = await response.json();
+            setTicket(updatedTicket);
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Error updating ticket:', error);
+            alert('An unexpected error occurred. Please try again later.');
+        }
+    };
+
     if (isLoading && !ticket?.description) return (
-<div className="flex flex-col justify-center items-center min-h-screen">
-  <Image src="/loading_logo.png" alt="DevLiftoff Logo" width={500} height={500} className="" />
-  <ReactLoading type="spin" color="#7a79ea" height={64} width={64} />
-</div>
+        <div className="flex flex-col justify-center items-center min-h-screen">
+            <Image src="/loading_logo.png" alt="DevLiftoff Logo" width={500} height={500} className="" />
+            <ReactLoading type="spin" color="#7a79ea" height={64} width={64} />
+        </div>
     );
     if (error) return <div>Error: {error}</div>;
     if (!ticket) return <div>Ticket not found</div>;
@@ -170,13 +211,50 @@ const CustomTicketPage = ({ params }) => {
             <div className="max-w-6xl mx-auto bg-white p-10 rounded-md shadow-md flex flex-col lg:flex-row min-h-screen">
                 <div className="flex-1 pr-0 lg:pr-8 mb-8 lg:mb-0">
                     <div className="mb-8">
-                        <h1 className="text-2xl font-bold">{ticket.title}</h1>
-                        <p className="text-gray-600">Ticket #{ticketId}</p>
+                        {isEditing ? (
+                            <>
+                                <input
+                                    type="text"
+                                    value={editTitle}
+                                    onChange={handleTitleChange}
+                                    className="w-full p-2 border rounded mb-4"
+                                />
+                                <textarea
+                                    value={editDescription}
+                                    onChange={handleDescriptionChange}
+                                    className="w-full p-2 border rounded mb-4"
+                                    style={{ minHeight: '100px' }}
+                                />
+                                <div className="flex justify-end">
+                                    <button
+                                        onClick={handleSave}
+                                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition mr-2"
+                                    >
+                                        Save
+                                    </button>
+                                    <button
+                                        onClick={toggleEdit}
+                                        className="px-4 py-2 rounded hover:bg-gray-200 transition"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <h1 className="text-2xl font-bold">{ticket.title}</h1>
+                                <p className="text-gray-600">Ticket #{ticketId}</p>
+                                <ReactMarkdown className="text-gray-800">{ticket.description || 'No description available'}</ReactMarkdown>
+                                <button
+                                    onClick={toggleEdit}
+                                    className="text-gray-400 hover:text-gray-200 transition mt-4 text-sm"
+                                >
+                                    Edit
+                                </button>
+                            </>
+                        )}
                     </div>
 
-                    <div className="mb-8">
-                        <ReactMarkdown className="text-gray-800">{ticket.description || 'No description available'}</ReactMarkdown>
-                    </div>
                     <div className="border-t border-gray-300 mb-5"></div>
                     <div className="mb-8">
                         <h2 className="text-xl font-semibold mb-4">Comments</h2>

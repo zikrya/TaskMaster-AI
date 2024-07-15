@@ -36,3 +36,45 @@ export async function GET(req, { params }) {
         });
     }
 }
+
+export async function PUT(req, { params }) {
+    const { projectId, ticketId } = params;
+    const { title, description } = await req.json();
+
+    if (!projectId || !ticketId) {
+        return new Response(JSON.stringify({ message: 'Project ID and Ticket ID are required' }), {
+            headers: { 'Content-Type': 'application/json' },
+            status: 400,
+        });
+    }
+
+    if (!title || !description) {
+        return new Response(JSON.stringify({ message: 'Title and description are required' }), {
+            headers: { 'Content-Type': 'application/json' },
+            status: 400,
+        });
+    }
+
+    try {
+        const updatedTicket = await prisma.customTicket.update({
+            where: {
+                id: parseInt(ticketId, 10),
+            },
+            data: {
+                title,
+                description,
+            },
+        });
+
+        return new Response(JSON.stringify(updatedTicket), {
+            headers: { 'Content-Type': 'application/json' },
+            status: 200,
+        });
+    } catch (error) {
+        console.error("Error updating ticket:", error);
+        return new Response(JSON.stringify({ message: 'Failed to update ticket' }), {
+            headers: { 'Content-Type': 'application/json' },
+            status: 500,
+        });
+    }
+}
